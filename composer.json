@@ -1,0 +1,37 @@
+{
+    "name": "mmdm/eazpl",
+    "description": "A convenient way to create ZPL commands for zebra printers",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Eazpl\\": "src/",
+            "Eazpl\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MMDM",
+            "email": "mmdehghan95@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-gd": "*",
+        "ext-sockets": "*"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^3.8"
+    }
+}
