@@ -11,7 +11,7 @@ use InvalidArgumentException;
 class Position implements RendererInterface
 {
     /**
-     * @var array|\class-string[]
+     * @var array<string>
      */
     protected array $notValidElements = [
         Barcode::class,
@@ -79,7 +79,7 @@ class Position implements RendererInterface
     }
 
     /**
-     * @param int $alignment
+     * @param AlignmentEnums|int $alignment
      * @return static
      */
     public function alignment(AlignmentEnums|int $alignment): static
