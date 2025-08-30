@@ -136,7 +136,7 @@ class RenderUtils
      */
     public static function getValidBoolean(BoolEnums|string|bool|null $bool): ?BoolEnums
     {
-        if (!$bool) {
+        if (is_null($bool)) {
             return null;
         }
 
@@ -184,9 +184,13 @@ class RenderUtils
 
         if ($hasMin && $hasMax && $value < $min && $value > $max) {
             throw new InvalidArgumentException("$valueName must be between $min and $max");
-        } elseif ($hasMax && $value > $max) {
+        }
+
+        if ($hasMax && $value > $max) {
             throw new InvalidArgumentException("$valueName must be less than or equal to $max");
-        } elseif ($hasMin && $value < $min) {
+        }
+
+        if ($hasMin && $value < $min) {
             throw new InvalidArgumentException("$valueName must be greater than or equal to $min");
         }
 
