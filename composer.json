@@ -32,6 +32,6 @@
     "prefer-stable": true,
     "require-dev": {
         "mockery/mockery": "^1.6",
-        "pestphp/pest": "^3.8"
+        "pestphp/pest": "^4.7"
     }
 }
