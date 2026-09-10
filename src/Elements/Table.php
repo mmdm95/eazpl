@@ -112,20 +112,23 @@ class Table implements RendererInterface
 
         $rowsCount = count($this->rows);
         $rowCounter = 0;
+        $rowY = $this->y;
 
-        $borderThickness = $this->getOption('border_thickness', $this->defaultBorderThickness);
+        $tableBorderThickness = (int)$this->getOption('border_thickness', $this->defaultBorderThickness);
+        $borderThickness = $tableBorderThickness;
 
         foreach ($this->rows as $rowIndex => $cells) {
             $rowCounter++;
 
             $cellsOptions = $this->cellsOptions[$rowIndex] ?? [];
             $rowOptions = $this->getRenderingRowOption($rowIndex, $rowCounter >= $rowsCount);
-            $borderThickness = $this->getRowOption($rowIndex, 'border_thickness', $borderThickness);
+            $borderThickness = (int)$this->getRowOption($rowIndex, 'border_thickness', $borderThickness);
+            $rowBorderBottom = (bool)($rowOptions['border_bottom'] ?? true);
 
             $row = new Row(
                 $rowIndex,
                 $this->x,
-                $this->y,
+                $rowY,
                 $this->tableWidth,
                 $cells,
                 $this->colsCount,
@@ -135,14 +138,24 @@ class Table implements RendererInterface
 
             $zpl[] = $row->render();
 
-            $this->renderedHeight += $row->getRenderedHeight() + $borderThickness;
+            $this->renderedHeight += $row->getRenderedHeight();
+            $rowY = $this->y + $this->renderedHeight;
+
+            if ($rowBorderBottom) {
+                $this->renderedHeight += $borderThickness;
+                $rowY += $borderThickness;
+            }
+        }
+
+        if ($rowsCount === 0) {
+            return '';
         }
 
         // Outer box
         array_unshift(
             $zpl,
             (new Position($this->x, $this->y,
-                new Box($this->tableWidth, $this->renderedHeight, $borderThickness)
+                new Box($this->tableWidth, $this->renderedHeight, $tableBorderThickness)
             ))->render()
         );
 

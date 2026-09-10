@@ -61,6 +61,6 @@ it('renders real image when GD is available', function () {
 
     $result = $unicodeText->render();
 
-    expect($result)->toStartWith('^GF,A,')
+    expect($result)->toStartWith('^GFA,')
         ->and(str_contains($result, 'A'))->toBeTrue();
 });

@@ -9,6 +9,7 @@ use Eazpl\Elements\Position;
 use Eazpl\Elements\Text;
 use Eazpl\Elements\TextBlock;
 use Eazpl\Elements\VerticalLine;
+use Eazpl\Elements\UnicodeText;
 use Eazpl\Elements\Wrapper;
 use Eazpl\Utils\RenderUtils;
 use Eazpl\Utils\Utils;
@@ -41,6 +42,11 @@ class Cell implements RendererInterface
     protected int $renderedHeight = 0;
 
     /**
+     * @var int
+     */
+    protected int $contentHeight = 0;
+
+    /**
      * @param int $colIndex
      * @param int $x
      * @param int $y
@@ -63,12 +69,10 @@ class Cell implements RendererInterface
         protected array                          $options = []
     )
     {
-        $width = $this->getOption('width');
-
+        $height = (int)$this->getOption('height', $this->defaultHeight);
         $this->defaultFont = new Font(
             'A',
-            $this->getOption('height', $this->defaultHeight) * 0.9,
-            $width ? $width - $this->getOption('padding', $this->padding) : null
+            max(1, (int)round($height * 0.9))
         );
     }
 
@@ -86,12 +90,13 @@ class Cell implements RendererInterface
     public function render(): string
     {
         $this->renderedHeight = 0;
+        $this->contentHeight = 0;
 
-        $borderThickness = $this->getOption('border_thickness', $this->defaultBorderThickness);
-        $cellWidth = $this->getOption('width', 1);
-        $padding = $this->getOption('padding', $this->padding);
+        $borderThickness = (int)$this->getOption('border_thickness', $this->defaultBorderThickness);
+        $cellWidth = (int)$this->getOption('width', 1);
+        $padding = (int)$this->getOption('padding', $this->padding);
 
-        $cellDefaultX = $this->x + ($this->colIndex * $cellWidth);
+        $cellDefaultX = $this->x;
         $cellDefaultY = $this->y;
 
         $cellX = $cellDefaultX + $padding;
@@ -101,7 +106,7 @@ class Cell implements RendererInterface
 
         if (is_string($this->text)) {
             $zpl[] = $this->renderTextCell($this->text, $cellX, $cellY, $cellWidth, $cellFont);
-        } elseif (is_array($this->text) && isset($cell['text'])) {
+        } elseif (is_array($this->text) && isset($this->text['text'])) {
             $font = $this->text['font'] ?? $cellFont;
             $zpl[] = $this->renderTextCell($this->text['text'], $cellX, $cellY, $cellWidth, $font);
         } elseif ($this->text instanceof RendererInterface) {
@@ -109,6 +114,8 @@ class Cell implements RendererInterface
         } else {
             return '';
         }
+
+        $this->renderedHeight = ($this->contentHeight + ($padding * 2));
 
         if ($this->getOption('border_bottom', true)) {
             // Horizontal line
@@ -121,7 +128,7 @@ class Cell implements RendererInterface
         if ($this->getOption('border_right', false)) {
             // Vertical line
             $zpl[] =
-                (new Position($this->x + (($this->colIndex + 1) * $cellWidth), $cellDefaultY,
+                (new Position($cellDefaultX + $cellWidth, $cellDefaultY,
                     new VerticalLine($this->renderedHeight + $borderThickness, $borderThickness))
                 )->render();
         }
@@ -142,7 +149,8 @@ class Cell implements RendererInterface
         $wrappedLines = $this->wrapText(
             $text,
             $cellWidth,
-            $font->getWidth() ?? $font->getHeight()
+            $this->getOption('padding', $this->padding),
+            $font
         );
 
         $texts = [];
@@ -151,21 +159,16 @@ class Cell implements RendererInterface
             $fontHeight = $font->getHeight();
             $lineY = $y + ($lineIndex * $fontHeight);
 
-            // TODO: Add support for unicode characters
-//            if (!Utils::isAscii($line)) {
-//                $texts = new UnicodeText($line, $font);
-//            } else {
-//                $text = new Text($line);
-//            }
-
-            $text = new Text($line, $font);
+            $text = Utils::isAscii($line)
+                ? new Text($line, $font)
+                : new UnicodeText($line, $font);
 
             $texts[] = (new Position($x, $lineY, $text));
 
             $cellHeight += $fontHeight;
         }
 
-        $this->renderedHeight = $cellHeight;
+        $this->contentHeight = $cellHeight;
 
         return RenderUtils::renderInsiderElements($texts);
     }
@@ -187,45 +190,55 @@ class Cell implements RendererInterface
     ): string
     {
         $zpl = [];
-        $els = [];
+        $contentY = 0;
+        $padding = (int)$this->getOption('padding', $this->padding);
 
         if ($element instanceof TextBlock) {
-            $this->renderedHeight = max(
-                $this->renderedHeight,
-                $element->getFont()->getRatio() * $element->getFont()->getHeight()
-            );
-        } elseif ($element instanceof Wrapper) {
-            $cellY = $y;
-            foreach ($element->getElements() as $el) {
-                if ($el instanceof TextBlock) {
-                    $this->renderedHeight = max(
-                        $this->renderedHeight,
-                        $el->getFont()->getRatio() * $el->getFont()->getHeight()
-                    );
-                } elseif ($el instanceof Text) {
-                    $zpl[] = $this->renderTextCell($el->getText(), $x, $cellY, $cellWidth, $font);
-                    $cellY += $this->renderedHeight;
+            $this->contentHeight = $element->getFont()->getHeight();
+            return (new Position($x, $y, $element))->render();
+        }
+
+        if ($element instanceof Wrapper) {
+            foreach ($element->getElements() as $child) {
+                $childY = $this->y + $padding + $contentY;
+
+                if ($child instanceof Text) {
+                    $zpl[] = $this->renderTextCell($child->getText(), $x, $childY, $cellWidth, $child->getFont() ?? $font);
+                    $contentY += $this->contentHeight;
                     continue;
                 }
 
-                $els[] = $el;
+                if ($child instanceof TextBlock) {
+                    $zpl[] = (new Position($x, $childY, $child))->render();
+                    $contentY += $child->getFont()->getHeight();
+                    continue;
+                }
+
+                $zpl[] = (new Position($x, $childY, $child))->render();
+                $contentY += (int)$this->getOption('height', $this->defaultHeight);
             }
+
+            $this->contentHeight = $contentY;
+            return implode('', $zpl);
         }
 
-        return (new Position($x, $y, $element))->render() .
-            RenderUtils::renderInsiderElements($els) .
-            implode('', $zpl);
+        $this->contentHeight = (int)$this->getOption('height', $this->defaultHeight);
+        return (new Position($x, $y, $element))->render();
     }
 
     /**
      * @param string $text
      * @param int $cellWidth
-     * @param int $fontWidth
+     * @param int $padding
+     * @param Font $font
      * @return array
      */
-    protected function wrapText(string $text, int $cellWidth, int $fontWidth): array
+    protected function wrapText(string $text, int $cellWidth, int $padding, Font $font): array
     {
-        $charPerLine = max(1, floor($cellWidth / $fontWidth));
+        $availableWidth = max(1, $cellWidth - ($padding * 2));
+        $estimatedCharacterWidth = max(1, Utils::estimateStringWidth($font, 'x'));
+        $charPerLine = max(1, (int)floor($availableWidth / $estimatedCharacterWidth));
+
         return explode("\n", trim(Utils::utf8Wordwrap($text, $charPerLine, "\n", true)));
     }
 

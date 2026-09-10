@@ -43,7 +43,7 @@ it('renders the image correctly', function () {
 
     $result = $image->render();
 
-    expect($result)->toBe('^GF,A,1024,256,mocked_image_data');
+    expect($result)->toBe('^GFA,1024,1024,256,mocked_image_data');
 });
 
 // Clean up Mockery after tests

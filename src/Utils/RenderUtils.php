@@ -57,7 +57,7 @@ class RenderUtils
         bool                       $shouldCheckNull = false
     ): ?BackedEnum
     {
-        $isValidEnumType = !enum_exists($enumType) || !method_exists($enumType, 'tryFrom');
+        $isValidEnumType = enum_exists($enumType) && method_exists($enumType, 'tryFrom');
 
         if ($shouldCheckNull && (!$isValidEnumType || !$enum)) {
             return null;
@@ -179,18 +179,15 @@ class RenderUtils
      */
     public static function getValidValue(int $value, string $valueName, ?int $min = null, ?int $max = null): int
     {
-        $hasMin = is_null($min);
-        $hasMax = is_null($max);
-
-        if ($hasMin && $hasMax && $value < $min && $value > $max) {
+        if (!is_null($min) && !is_null($max) && ($value < $min || $value > $max)) {
             throw new InvalidArgumentException("$valueName must be between $min and $max");
         }
 
-        if ($hasMax && $value > $max) {
+        if (!is_null($max) && $value > $max) {
             throw new InvalidArgumentException("$valueName must be less than or equal to $max");
         }
 
-        if ($hasMin && $value < $min) {
+        if (!is_null($min) && $value < $min) {
             throw new InvalidArgumentException("$valueName must be greater than or equal to $min");
         }
 

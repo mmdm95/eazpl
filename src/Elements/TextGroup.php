@@ -50,10 +50,10 @@ class TextGroup implements RendererInterface
     )
     {
         $this->orientation = in_array($orientation, ['h', 'v']) ? $orientation : 'h';
-        $this->texts = array_filter(
+        $this->texts = array_values(array_filter(
             $texts,
-            fn($text) => $text instanceof Text || ($text instanceof GroupTextWrapper && $text->getOrientation() === 'v')
-        );
+            fn($text) => $text instanceof Text || $text instanceof GroupTextWrapper
+        ));
 
         $this->maxX = $this->x;
         $this->maxY = $this->y;
@@ -110,14 +110,21 @@ class TextGroup implements RendererInterface
         $zpl = [];
         $cursorX = $this->x;
         $cursorY = $this->y;
+        $maxTextWidth = 0;
+        $maxTextHeight = 0;
 
         foreach ($this->texts as $text) {
             if ($text instanceof GroupTextWrapper) {
                 $groupMaxW = $text->getMaxW();
                 $groupMaxH = $text->getMaxH();
+                $maxTextWidth = max($maxTextWidth, $groupMaxW);
+                $maxTextHeight = max($maxTextHeight, $groupMaxH);
 
                 // Render at current position
                 $element = new TextGroup($cursorX, $cursorY, $text->getOrientation(), $text->getGap(), ...$text->getTexts());
+                if ($text->getFont()) {
+                    $element->font($text->getFont());
+                }
                 $zpl[] = $element->render();
 
                 // Move cursor **after rendering**
@@ -128,8 +135,10 @@ class TextGroup implements RendererInterface
                 }
             } else {
                 $font = $text->getFont() ?? $this->font;
-                $textWidth = Utils::estimateStringWidth($font, $text->getText(), $this->charWidthRatio);
+                $textWidth = (int)ceil(Utils::estimateStringWidth($font, $text->getText(), $this->charWidthRatio));
                 $textHeight = $font->getHeight();
+                $maxTextWidth = max($maxTextWidth, $textWidth);
+                $maxTextHeight = max($maxTextHeight, $textHeight);
 
                 // Render at current position
                 $element = new Position($cursorX, $cursorY, $text);
@@ -144,8 +153,18 @@ class TextGroup implements RendererInterface
             }
         }
 
-        $this->maxX = $cursorX;
-        $this->maxY = $cursorY;
+        if (count($this->texts) > 0) {
+            if ('h' === $this->orientation) {
+                $this->maxX = $cursorX - $this->gap;
+                $this->maxY = $this->y + $maxTextHeight;
+            } else {
+                $this->maxX = $this->x + $maxTextWidth;
+                $this->maxY = $cursorY - $this->gap;
+            }
+        } else {
+            $this->maxX = $this->x;
+            $this->maxY = $this->y;
+        }
 
         return implode('', $zpl);
     }

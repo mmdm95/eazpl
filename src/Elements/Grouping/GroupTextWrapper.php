@@ -45,6 +45,8 @@ class GroupTextWrapper
     public function font(Font $font): static
     {
         $this->font = $font;
+        $this->maxW = null;
+        $this->maxH = null;
         return $this;
     }
 
@@ -87,14 +89,20 @@ class GroupTextWrapper
     {
         if (is_null($this->maxW)) {
             $this->maxW = 0;
+            $textCount = count($this->texts);
+
             foreach ($this->texts as $text) {
                 $font = $text->getFont() ?? $this->font;
 
                 if ('v' === $this->orientation) {
-                    $this->maxW = max($this->maxW, Utils::estimateStringWidth($font, $text->getText()));
+                    $this->maxW = max($this->maxW, (int)ceil(Utils::estimateStringWidth($font, $text->getText())));
                 } else {
-                    $this->maxW += Utils::estimateStringWidth($font, $text->getText());
+                    $this->maxW += (int)ceil(Utils::estimateStringWidth($font, $text->getText()));
                 }
+            }
+
+            if ('h' === $this->orientation && $textCount > 1) {
+                $this->maxW += $this->gap * ($textCount - 1);
             }
         }
 
@@ -108,6 +116,8 @@ class GroupTextWrapper
     {
         if (is_null($this->maxH)) {
             $this->maxH = 0;
+            $textCount = count($this->texts);
+
             foreach ($this->texts as $text) {
                 $font = $text->getFont() ?? $this->font;
 
@@ -116,6 +126,10 @@ class GroupTextWrapper
                 } else {
                     $this->maxH = max($this->maxH, $font->getHeight());
                 }
+            }
+
+            if ('v' === $this->orientation && $textCount > 1) {
+                $this->maxH += $this->gap * ($textCount - 1);
             }
         }
 

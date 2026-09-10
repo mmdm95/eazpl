@@ -49,7 +49,13 @@ class Image implements RendererInterface
      */
     public function render(): string
     {
-        $decoded = $this->decoder->resize($this->width, $this->height)->decode();
+        $decoder = $this->decoder;
+
+        if ($this->width !== null || $this->height !== null) {
+            $decoder = $decoder->resize($this->height ?? 0, $this->width);
+        }
+
+        $decoded = $decoder->decode();
 
         return sprintf(
             '^GFA,%d,%d,%d,%s',

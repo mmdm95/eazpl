@@ -68,7 +68,7 @@ class Row implements RendererInterface
             throw new InvalidArgumentException('Please provide at least one cell');
         }
 
-        if ($this->cellsCount && count($cells) !== $this->cellsCount) {
+        if ($this->cellsCount && count($this->cells) !== $this->cellsCount) {
             throw new InvalidArgumentException(
                 sprintf("Row must have exactly %d columns.", $this->cellsCount)
             );
@@ -91,10 +91,10 @@ class Row implements RendererInterface
         $zpl = [];
 
         $cellsCount = count($this->cells);
-        $cellCounter = 0;
-
-        $cellWidth = floor($this->width / $cellsCount);
         $maxHeight = PHP_INT_MIN;
+        $cellWidths = $this->getCellWidths();
+        $cursorX = $this->x;
+        $cellCounter = 0;
 
         /**
          * @var int $colIndex
@@ -103,25 +103,67 @@ class Row implements RendererInterface
         foreach ($this->cells as $colIndex => $cellScheme) {
             $cellCounter++;
 
-            $rowHeight = $this->getCellOption($colIndex, 'height', $this->defaultRowHeight);
-            $extraY = ($this->rowIndex * $rowHeight);
+            $rowHeight = (int)$this->getCellOption($colIndex, 'height', $this->defaultRowHeight);
+            $cellWidth = $cellWidths[$colIndex];
 
             $cellOptions = $this->getRenderingCellOptions($colIndex, $rowHeight, $cellCounter >= $cellsCount);
 
-            if ($width = $this->getCellOption($colIndex, 'width', $cellWidth)) {
-                $cellOptions['width'] = $width;
-            }
+            $cellOptions['width'] = $cellWidth;
 
-            $cell = new Cell($colIndex, $this->x, $this->y + $extraY, $cellScheme, $cellOptions);
+            $cell = new Cell($colIndex, $cursorX, $this->y, $cellScheme, $cellOptions);
 
             $zpl[] = $cell->render();
 
             $maxHeight = max($maxHeight, $cell->getRenderedHeight());
+            $cursorX += $cellWidth;
         }
 
         $this->renderedHeight = $maxHeight;
 
         return implode('', $zpl);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    protected function getCellWidths(): array
+    {
+        $widths = [];
+        $explicitWidth = 0;
+        $columnsWithoutWidth = [];
+
+        foreach (array_keys($this->cells) as $colIndex) {
+            $width = $this->getCellOption($colIndex, 'width');
+
+            if (is_numeric($width) && (int)$width > 0) {
+                $widths[$colIndex] = (int)$width;
+                $explicitWidth += (int)$width;
+                continue;
+            }
+
+            $columnsWithoutWidth[] = $colIndex;
+        }
+
+        if ($explicitWidth > $this->width) {
+            throw new InvalidArgumentException('The sum of cell widths must not exceed the table width.');
+        }
+
+        if (count($columnsWithoutWidth) === 0) {
+            return $widths;
+        }
+
+        $remainingWidth = $this->width - $explicitWidth;
+        $remainingColumns = count($columnsWithoutWidth);
+        $defaultWidth = (int)floor($remainingWidth / $remainingColumns);
+        $lastColumn = array_key_last($columnsWithoutWidth);
+
+        foreach ($columnsWithoutWidth as $colIndex) {
+            $widths[$colIndex] = $colIndex === $lastColumn
+                ? $remainingWidth - ($defaultWidth * ($remainingColumns - 1))
+                : $defaultWidth;
+        }
+
+        return $widths;
     }
 
     /**

@@ -67,7 +67,7 @@ it('creates a simple zpl', function () {
 
     $result = $printer->build();
 
-//    file_put_contents(dirname(__DIR__) . '/testing/result.txt', $result);
+    file_put_contents(dirname(__DIR__) . '/testing/simple-result.zpl', $result);
 
     expect(true)->toBeTrue();
 });
@@ -97,7 +97,7 @@ it('created a two column zpl', function () {
 
     $result = $printer->build();
 
-    file_put_contents(dirname(__DIR__) . '/testing/result.txt', $result);
+    file_put_contents(dirname(__DIR__) . '/testing/two-column-result.zpl', $result);
 
     expect(true)->toBeTrue();
 });

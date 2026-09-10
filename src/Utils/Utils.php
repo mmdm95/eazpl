@@ -23,25 +23,59 @@ class Utils
      * @see https://www.php.net/manual/en/function.wordwrap.php#127205
      */
     public static function utf8Wordwrap(
-        $string,
+        string $string,
         int $width = 75,
         string $break = "\n",
         bool $cutLongWords = false
     ): string
     {
-        if ($cutLongWords) {
-            // Match anything 1 to $width chars long followed by whitespace or EOS,
-            // otherwise match anything $width chars long
-            $search = '/(.{1,' . $width . '})(?:\s|$)|(.{' . $width . '})/uS';
-            $replace = '$1$2' . $break;
-        } else {
-            // Anchor the beginning of the pattern with a lookahead
-            // to avoid crazy backtracking when words are longer than $width
-            $search = '/(?=\s)(.{1,' . $width . '})(?:\s|$)/uS';
-            $replace = '$1' . $break;
+        $width = max(1, $width);
+        $wrappedLines = [];
+
+        foreach (preg_split('/\R/u', $string) as $line) {
+            $words = preg_split('/\s+/u', $line, -1, PREG_SPLIT_NO_EMPTY);
+
+            if (!$words) {
+                $wrappedLines[] = '';
+                continue;
+            }
+
+            $currentLine = '';
+
+            foreach ($words as $word) {
+                if ($currentLine === '') {
+                    $candidate = $word;
+                } else {
+                    $candidate = $currentLine . ' ' . $word;
+                }
+
+                if (mb_strlen($candidate) <= $width || (!$cutLongWords && $currentLine !== '')) {
+                    $currentLine = $candidate;
+                    continue;
+                }
+
+                if ($currentLine !== '') {
+                    $wrappedLines[] = $currentLine;
+                    $currentLine = '';
+                }
+
+                if (!$cutLongWords || mb_strlen($word) <= $width) {
+                    $currentLine = $word;
+                    continue;
+                }
+
+                while (mb_strlen($word) > $width) {
+                    $wrappedLines[] = mb_substr($word, 0, $width);
+                    $word = mb_substr($word, $width);
+                }
+
+                $currentLine = $word;
+            }
+
+            $wrappedLines[] = $currentLine;
         }
 
-        return preg_replace($search, $replace, $string);
+        return implode($break, $wrappedLines);
     }
 
     /**
