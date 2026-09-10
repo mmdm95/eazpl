@@ -20,6 +20,11 @@ class Font implements RendererInterface
     protected string $defaultFontPath;
 
     /**
+     * @var string|null
+     */
+    protected ?string $printerPath = null;
+
+    /**
      * @param string $fontName
      * @param int $height
      * @param int|null $width
@@ -87,6 +92,20 @@ class Font implements RendererInterface
     }
 
     /**
+     * @param string $path
+     * @return static
+     */
+    public function printerPath(string $path): static
+    {
+        if (trim($path) === '') {
+            throw new InvalidArgumentException('Please provide a valid printer font path');
+        }
+
+        $this->printerPath = $path;
+        return $this;
+    }
+
+    /**
      * @param bool $bool
      * @return static
      */
@@ -101,6 +120,15 @@ class Font implements RendererInterface
      */
     public function render(): string
     {
+        if ($this->printerPath && !$this->isForBlock) {
+            return (!$this->isForBlock ? '^A@' : '') .
+                ($this->orientation ? $this->orientation->value : 'N') .
+                ',' .
+                $this->height .
+                ($this->width ? ',' . $this->width : '') .
+                ',' . $this->printerPath;
+        }
+
         return (!$this->isForBlock ? '^A' : '') .
             $this->fontName .
             ($this->orientation ? $this->orientation->value : '') .

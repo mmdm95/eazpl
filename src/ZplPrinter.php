@@ -3,16 +3,40 @@
 namespace Eazpl;
 
 use Eazpl\Contracts\RendererInterface;
+use Eazpl\Components\PlusMinus;
 use Eazpl\Elements\Barcode;
 use Eazpl\Elements\Charset;
+use Eazpl\Elements\Code39;
+use Eazpl\Elements\DataMatrix;
+use Eazpl\Elements\Darkness;
+use Eazpl\Elements\FieldBlock;
+use Eazpl\Elements\FieldNumber;
+use Eazpl\Elements\FieldTypeset;
+use Eazpl\Elements\FieldVariable;
+use Eazpl\Elements\FontDefinition;
 use Eazpl\Elements\Comment;
 use Eazpl\Elements\HexIndicator;
+use Eazpl\Elements\LabelHome;
+use Eazpl\Elements\LabelLength;
+use Eazpl\Elements\LabelReversePrint;
+use Eazpl\Elements\LabelShift;
+use Eazpl\Elements\LabelTop;
 use Eazpl\Elements\Mode;
+use Eazpl\Elements\PrintMirror;
+use Eazpl\Elements\PrintOrientation;
+use Eazpl\Elements\PrintQuantity;
+use Eazpl\Elements\PrintRate;
+use Eazpl\Elements\PrintWidth;
+use Eazpl\Elements\QrCode;
+use Eazpl\Elements\RecallFormat;
+use Eazpl\Elements\RecallGraphics;
 use Eazpl\Elements\Position;
 use Eazpl\Elements\Raw;
 use Eazpl\Elements\ReversePrint;
+use Eazpl\Elements\SerialNumber;
 use Eazpl\Elements\Table;
 use Eazpl\Elements\TextBlock;
+use Eazpl\Elements\TextBoundingBox;
 use Eazpl\Elements\TextGroup;
 use Eazpl\Elements\Wrapper;
 use Eazpl\Exceptions\ConnectionException;
@@ -25,10 +49,6 @@ use JsonSerializable;
 
 class ZplPrinter implements JsonSerializable
 {
-    // TODO: Parse these and create more elements
-    // ^XA^MMP^PW300^LS0^LT0^FT10,60^APN,30,30^FH\^FDSAMPLE TEXT^FS^XZ
-    // ^FO10,10^GC150,150,B^FS
-
     /**
      * @var array
      */
@@ -40,16 +60,40 @@ class ZplPrinter implements JsonSerializable
     protected array $validElements = [
         Barcode::class,
         Charset::class,
+        Code39::class,
+        DataMatrix::class,
+        Darkness::class,
+        FieldBlock::class,
+        FieldNumber::class,
+        FieldTypeset::class,
+        FieldVariable::class,
+        FontDefinition::class,
         Comment::class,
         HexIndicator::class,
+        LabelHome::class,
+        LabelLength::class,
+        LabelReversePrint::class,
+        LabelShift::class,
+        LabelTop::class,
         Mode::class,
+        PrintMirror::class,
+        PrintOrientation::class,
+        PrintQuantity::class,
+        PrintRate::class,
+        PrintWidth::class,
+        QrCode::class,
+        RecallFormat::class,
+        RecallGraphics::class,
         Position::class,
         Raw::class,
         ReversePrint::class,
+        SerialNumber::class,
         Table::class,
         TextBlock::class,
+        TextBoundingBox::class,
         TextGroup::class,
         Wrapper::class,
+        PlusMinus::class,
     ];
 
     /**

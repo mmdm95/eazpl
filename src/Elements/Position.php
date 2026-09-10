@@ -3,6 +3,7 @@
 namespace Eazpl\Elements;
 
 use Eazpl\Contracts\RendererInterface;
+use Eazpl\Components\PlusMinus;
 use Eazpl\Enums\AlignmentEnums;
 use Eazpl\Enums\CoordinationEnums;
 use Eazpl\Utils\RenderUtils;
@@ -17,6 +18,7 @@ class Position implements RendererInterface
         Barcode::class,
         Position::class,
         Table::class,
+        PlusMinus::class,
     ];
 
     /**
