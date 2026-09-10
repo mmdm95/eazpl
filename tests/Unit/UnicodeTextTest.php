@@ -29,6 +29,7 @@ it('renders using Image and GdDecoder', function () {
         ->makePartial()
         ->shouldAllowMockingProtectedMethods();
 
+    $unicodeText->shouldAllowMockingProtectedMethods();
     $unicodeText->shouldReceive('getTextImage')
         ->with('Hello', $font)
         ->andReturn('fake-gd-resource');
