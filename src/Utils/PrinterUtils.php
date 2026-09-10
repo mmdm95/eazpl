@@ -16,14 +16,8 @@ class PrinterUtils
     {
         $ipAddress = trim($ipAddress);
 
-        // Check if the IP is a valid IPv4 address
-        if (false === filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            throw new InvalidIPAddressException('Please provide a valid IPv4 address.');
-        }
-
-        // Check if the IP is a valid IPv6 address
-        if (false === filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            throw new InvalidIPAddressException('Please provide a valid IPv6 address.');
+        if (false === filter_var($ipAddress, FILTER_VALIDATE_IP)) {
+            throw new InvalidIPAddressException('Please provide a valid IPv4 or IPv6 address.');
         }
 
         return $ipAddress;
