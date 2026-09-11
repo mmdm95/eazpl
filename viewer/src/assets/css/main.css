@@ -1,0 +1,98 @@
+@import 'tailwindcss';
+
+/* Tailwind utilities resolve to the runtime values installed by applyBaseTheme(). */
+@theme {
+  --color-primary: var(--ui-color-primary);
+  --color-primary-hover: var(--ui-color-primary-hover);
+  --color-primary-soft: var(--ui-color-primary-soft);
+  --color-primary-soft-hover: var(--ui-color-primary-soft-hover);
+  --color-secondary: var(--ui-color-secondary);
+  --color-secondary-hover: var(--ui-color-secondary-hover);
+  --color-danger: var(--ui-color-danger);
+  --color-danger-hover: var(--ui-color-danger-hover);
+  --color-danger-soft: var(--ui-color-danger-soft);
+  --color-success: var(--ui-color-success);
+  --color-success-hover: var(--ui-color-success-hover);
+  --color-success-soft: var(--ui-color-success-soft);
+  --color-surface: var(--ui-color-surface);
+  --color-surface-muted: var(--ui-color-surface-muted);
+  --color-surface-hover: var(--ui-color-surface-hover);
+  --color-surface-raised: var(--ui-color-surface-raised);
+  --color-overlay: var(--ui-color-overlay);
+  --color-border: var(--ui-color-border);
+  --color-border-strong: var(--ui-color-border-strong);
+  --color-content: var(--ui-color-content);
+  --color-content-muted: var(--ui-color-content-muted);
+  --color-content-subtle: var(--ui-color-content-subtle);
+  --color-content-inverted: var(--ui-color-content-inverted);
+  --color-shadow: var(--ui-color-shadow);
+
+  --radius-control: var(--ui-radius-control);
+  --radius-card: var(--ui-radius-card);
+  --radius-card-lg: var(--ui-radius-card-lg);
+  --radius-overlay: var(--ui-radius-overlay);
+  --radius-pill: var(--ui-radius-pill);
+
+  --spacing-control-height-sm: var(--ui-control-height-sm);
+  --spacing-control-height-md: var(--ui-control-height-md);
+  --spacing-control-height-lg: var(--ui-control-height-lg);
+  --spacing-control-padding-x-sm: var(--ui-control-padding-x-sm);
+  --spacing-control-padding-x-md: var(--ui-control-padding-x-md);
+  --spacing-control-padding-x-lg: var(--ui-control-padding-x-lg);
+  --spacing-control-padding-y-sm: var(--ui-control-padding-y-sm);
+  --spacing-control-padding-y-md: var(--ui-control-padding-y-md);
+  --spacing-control-padding-y-lg: var(--ui-control-padding-y-lg);
+  --spacing-control-gap-sm: var(--ui-control-gap-sm);
+  --spacing-control-gap-md: var(--ui-control-gap-md);
+  --spacing-control-gap-lg: var(--ui-control-gap-lg);
+  --spacing-icon-sm: var(--ui-icon-sm);
+  --spacing-icon-md: var(--ui-icon-md);
+  --spacing-icon-xs: var(--ui-icon-xs);
+  --spacing-overlay-padding: var(--ui-overlay-padding);
+  --spacing-overlay-gap: var(--ui-overlay-gap);
+  --spacing-menu-padding: var(--ui-menu-padding);
+  --spacing-menu-max-height: var(--ui-menu-max-height);
+  --spacing-field-action-offset: var(--ui-field-action-offset);
+  --spacing-field-action-padding: var(--ui-field-action-padding);
+  --spacing-field-label-gap: var(--ui-field-label-gap);
+  --spacing-dropdown-clear-space: var(--ui-dropdown-clear-space);
+  --spacing-drag-handle-area: var(--ui-drag-handle-area);
+  --spacing-drag-handle-length: var(--ui-drag-handle-length);
+  --spacing-drag-handle-thickness: var(--ui-drag-handle-thickness);
+  --spacing-switch-height-sm: var(--ui-switch-height-sm);
+  --spacing-switch-height-md: var(--ui-switch-height-md);
+  --spacing-switch-height-lg: var(--ui-switch-height-lg);
+  --spacing-switch-width-sm: var(--ui-switch-width-sm);
+  --spacing-switch-width-md: var(--ui-switch-width-md);
+  --spacing-switch-width-lg: var(--ui-switch-width-lg);
+  --spacing-switch-knob-sm: var(--ui-switch-knob-sm);
+  --spacing-switch-knob-md: var(--ui-switch-knob-md);
+  --spacing-switch-knob-lg: var(--ui-switch-knob-lg);
+  --spacing-content-sm: var(--ui-content-padding-sm);
+  --spacing-content-md: var(--ui-content-padding-md);
+  --spacing-content-lg: var(--ui-content-padding-lg);
+  --spacing-content-gap: var(--ui-content-gap);
+  --spacing-page-padding: var(--ui-page-padding);
+  --spacing-page-gap: var(--ui-page-gap);
+
+  --text-control-sm: var(--ui-text-control-sm);
+  --text-control-md: var(--ui-text-control-md);
+  --text-control-lg: var(--ui-text-control-lg);
+  --text-caption: var(--ui-text-caption);
+  --text-title: var(--ui-text-title);
+  --translate-motion-lift: var(--ui-motion-lift);
+  --scale-motion-press: var(--ui-motion-press);
+}
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+}
+.dark,
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@utility dropdown-clear-position {
+  inset-inline-end: var(--ui-overlay-padding);
+}
