@@ -238,8 +238,6 @@ class Cell implements RendererInterface
         $availableWidth = max(1, $cellWidth - ($padding * 2));
         $estimatedCharacterWidth = max(1, Utils::estimateStringWidth($font, 'x'));
         $charPerLine = max(1, (int)floor($availableWidth / $estimatedCharacterWidth));
-        $text = str_replace('~BR', "\n", $text);
-
         return explode("\n", trim(Utils::utf8Wordwrap($text, $charPerLine, "\n", true)));
     }
 

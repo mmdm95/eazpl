@@ -223,8 +223,6 @@ final class ZplComponentRegistry
                 new ZplAttributeDefinition('fontSize', 'number', 'Font size', true, 24),
                 new ZplAttributeDefinition('padding', 'number', 'Padding', true, 4),
                 new ZplAttributeDefinition('borderThickness', 'number', 'Border thickness', true, 2),
-                new ZplAttributeDefinition('headerBreak', 'boolean', 'Break after header (~BR)', false, false),
-                new ZplAttributeDefinition('rowBreak', 'boolean', 'Break after each row (~BR)', false, false),
             ],
             self::tableFactory(),
             320,
@@ -623,8 +621,6 @@ final class ZplComponentRegistry
                     'font' => new Elements\Font('0', (int)$attributes['fontSize']),
                     'padding' => (int)$attributes['padding'],
                     'border_thickness' => (int)$attributes['borderThickness'],
-                    'break_after_header' => (bool)$attributes['headerBreak'],
-                    'break_rows' => (bool)$attributes['rowBreak'],
                 ],
             );
         };

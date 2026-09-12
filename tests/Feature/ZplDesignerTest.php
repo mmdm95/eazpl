@@ -95,7 +95,7 @@ it('generates tables with more than two columns', function () {
         ->toContain('^FDD');
 });
 
-it('generates table break commands from designer options', function () {
+it('does not emit background rectangles as table breaks', function () {
     $state = [
         'label' => ['width' => 812, 'height' => 500, 'dpi' => 203, 'orientation' => 'portrait'],
         'components' => [[
@@ -109,8 +109,6 @@ it('generates table break commands from designer options', function () {
                 'fontSize' => 24,
                 'padding' => 4,
                 'borderThickness' => 2,
-                'headerBreak' => true,
-                'rowBreak' => true,
             ],
         ]],
         'selectedComponentId' => null,
@@ -122,7 +120,7 @@ it('generates table break commands from designer options', function () {
     $state = (new DesignerStateValidator())->validate($state);
     $zpl = (new ZplDesignerGenerator(new ZplComponentRegistry()))->generate($state);
 
-    expect(substr_count($zpl, '~BR'))->toBe(1);
+    expect($zpl)->not->toContain('~BR');
 });
 
 it('generates group text wrapper components', function () {

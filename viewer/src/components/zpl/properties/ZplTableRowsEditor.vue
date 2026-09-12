@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, watch} from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps<{
   columns: number
@@ -10,58 +10,90 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const rows = computed<string[][]>(() => {
-  const value = typeof props.modelValue === 'string' ? props.modelValue : JSON.stringify(props.modelValue ?? [])
+const headerRow = ref<string[]>([])
+const dataRows = ref<string[][]>([])
+const hasHeader = ref(false)
+let lastEmittedValue = ''
+
+function parseRows(): void {
+  const value =
+    typeof props.modelValue === 'string' ? props.modelValue : JSON.stringify(props.modelValue ?? [])
+  if (value === lastEmittedValue) return
 
   try {
     const parsed = JSON.parse(value) as unknown
-    if (!Array.isArray(parsed)) return []
-    return parsed.map((row) => (Array.isArray(row) ? row.map(String) : []))
+    if (!Array.isArray(parsed)) {
+      headerRow.value = normalizeRow([])
+      dataRows.value = []
+      hasHeader.value = false
+      return
+    }
+    const rows = parsed.map((row) => (Array.isArray(row) ? row.map(String) : []))
+    hasHeader.value = rows.length > 0
+    headerRow.value = normalizeRow(rows[0] ?? [])
+    dataRows.value = rows.slice(1).map(normalizeRow)
   } catch {
-    return []
+    headerRow.value = normalizeRow([])
+    dataRows.value = []
+    hasHeader.value = false
   }
-})
-
-const hasHeader = computed(() => rows.value.length > 0)
-const bodyRows = computed(() => rows.value.slice(1))
+}
 
 function emitRows(nextRows: string[][]): void {
-  emit('update:modelValue', JSON.stringify(nextRows))
+  lastEmittedValue = JSON.stringify(nextRows)
+  emit('update:modelValue', lastEmittedValue)
+}
+
+function normalizeRow(row: string[]): string[] {
+  const nextRow = row.slice(0, props.columns)
+  while (nextRow.length < props.columns) nextRow.push('')
+  return nextRow
 }
 
 function normalizeRows(value: string[][]): string[][] {
-  return value.map((row) => {
-    const nextRow = row.slice(0, props.columns)
-    while (nextRow.length < props.columns) nextRow.push('')
-    return nextRow
-  })
+  return value.map(normalizeRow)
 }
 
 function setHeaderEnabled(enabled: boolean): void {
-  const currentHeader = rows.value[0] ?? Array.from({length: props.columns}, () => '')
-  const currentBody = bodyRows.value
-  emitRows(normalizeRows(enabled ? [currentHeader, ...currentBody] : currentBody))
+  const nextRows = enabled ? [headerRow.value, ...dataRows.value] : dataRows.value
+  emitRows(normalizeRows(nextRows))
 }
 
-function updateCell(rowOffset: number, columnIndex: number, value: string): void {
-  const nextRows = rows.value.map((row) => [...row])
-  if (!nextRows[rowOffset]) return
-  nextRows[rowOffset][columnIndex] = value
-  emitRows(nextRows)
+function updateHeaderCell(columnIndex: number, value: string): void {
+  headerRow.value = normalizeRow([...headerRow.value])
+  headerRow.value[columnIndex] = value
+  emitRows(normalizeRows([headerRow.value, ...dataRows.value]))
+}
+
+function updateDataCell(rowIndex: number, columnIndex: number, value: string): void {
+  dataRows.value = dataRows.value.map((row, currentIndex) => {
+    if (currentIndex !== rowIndex) return row
+    const nextRow = [...row]
+    nextRow[columnIndex] = value
+    return nextRow
+  })
+  emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
 }
 
 function addRow(): void {
-  emitRows(normalizeRows([...rows.value, Array.from({length: props.columns}, () => '')]))
+  dataRows.value = [...dataRows.value, Array.from({ length: props.columns }, () => '')]
+  emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
 }
 
-function removeRow(rowOffset: number): void {
-  emitRows(rows.value.filter((_, index) => index !== rowOffset))
+function removeRow(rowIndex: number): void {
+  dataRows.value = dataRows.value.filter((_, currentIndex) => currentIndex !== rowIndex)
+  emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
 }
+
+watch(() => props.modelValue, parseRows, { immediate: true })
 
 watch(
   () => props.columns,
-  () => emitRows(normalizeRows(rows.value)),
-  {immediate: true},
+  () => {
+    headerRow.value = normalizeRow(headerRow.value)
+    dataRows.value = dataRows.value.map(normalizeRow)
+    emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
+  },
 )
 </script>
 <template>
@@ -69,7 +101,9 @@ watch(
     <div class="flex items-center justify-between gap-3">
       <div>
         <p class="text-sm font-medium text-content">Table rows</p>
-        <p class="text-xs text-content-muted">Use <code>~BR</code> in a cell to force a line break.</p>
+        <p class="text-xs text-content-muted">
+          Use multiline text to create multiple lines in a cell.
+        </p>
       </div>
       <label class="inline-flex items-center gap-2 text-xs font-medium text-content">
         <input
@@ -86,42 +120,47 @@ watch(
       <div class="min-w-max rounded-control border border-primary/40 bg-primary-soft p-2">
         <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-primary">Header</p>
         <div class="flex gap-2">
-          <input
-            v-for="(cell, columnIndex) in rows[0]"
+          <textarea
+            v-for="(cell, columnIndex) in headerRow"
             :key="columnIndex"
-            type="text"
-            class="h-8 w-28 rounded-control border border-border bg-surface px-2 text-xs text-content"
+            rows="2"
+            class="w-28 resize-y rounded-control border border-border bg-surface px-2 py-1 text-xs text-content"
             :aria-label="`Header column ${columnIndex + 1}`"
             :value="cell"
-            placeholder="Use ~BR"
-            @input="updateCell(0, columnIndex, ($event.target as HTMLInputElement).value)"
-          />
+            placeholder="One line per row"
+            @input="updateHeaderCell(columnIndex, ($event.target as HTMLTextAreaElement).value)"
+          ></textarea>
         </div>
       </div>
     </div>
 
-    <div v-if="bodyRows.length === 0" class="rounded-control border border-dashed border-border p-3 text-xs text-content-muted">
+    <div
+      v-if="dataRows.length === 0"
+      class="rounded-control border border-dashed border-border p-3 text-xs text-content-muted"
+    >
       No data rows. Add one to populate the table.
     </div>
 
-    <div v-for="(row, rowOffset) in bodyRows" :key="rowOffset" class="flex items-start gap-2">
+    <div v-for="(row, rowOffset) in dataRows" :key="rowOffset" class="flex items-start gap-2">
       <div class="flex gap-2 overflow-x-auto">
-        <input
+        <textarea
           v-for="(cell, columnIndex) in row"
           :key="columnIndex"
-          type="text"
-          class="h-8 w-28 rounded-control border border-border bg-surface px-2 text-xs text-content"
+          rows="2"
+          class="w-28 resize-y rounded-control border border-border bg-surface px-2 py-1 text-xs text-content"
           :aria-label="`Row ${rowOffset + 1}, column ${columnIndex + 1}`"
           :value="cell"
-          placeholder="Use ~BR"
-          @input="updateCell(rowOffset + 1, columnIndex, ($event.target as HTMLInputElement).value)"
-        />
+          placeholder="One line per row"
+          @input="
+            updateDataCell(rowOffset, columnIndex, ($event.target as HTMLTextAreaElement).value)
+          "
+        ></textarea>
       </div>
       <button
         type="button"
         class="mt-1 h-6 rounded-pill px-2 text-xs font-medium text-danger transition hover:bg-danger-soft"
         :aria-label="`Remove row ${rowOffset + 1}`"
-        @click="removeRow(rowOffset + 1)"
+        @click="removeRow(rowOffset)"
       >
         Remove
       </button>

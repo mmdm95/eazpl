@@ -9,6 +9,7 @@ export interface ZplToolbarProps {
   generating: boolean
   hasOutput: boolean
   activeTool: ZplDesignerTool
+  fullscreen?: boolean
 }
 
 export interface ZplToolbarEmits {
@@ -18,6 +19,7 @@ export interface ZplToolbarEmits {
   'zoom-in': []
   'zoom-out': []
   fit: []
+  fullscreen: []
   undo: []
   redo: []
   generate: []

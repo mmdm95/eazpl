@@ -5,7 +5,7 @@ namespace Eazpl;
 use Eazpl\Contracts\RendererInterface;
 use Eazpl\Components\PlusMinus;
 use Eazpl\Elements\Barcode;
-use Eazpl\Elements\Break_;
+use Eazpl\Elements\BackgroundRectangle;
 use Eazpl\Elements\Charset;
 use Eazpl\Elements\Code39;
 use Eazpl\Elements\DataMatrix;
@@ -60,7 +60,7 @@ class ZplPrinter implements JsonSerializable
      */
     protected array $validElements = [
         Barcode::class,
-        Break_::class,
+        BackgroundRectangle::class,
         Charset::class,
         Code39::class,
         DataMatrix::class,

@@ -20,6 +20,8 @@ export interface ZplCanvasEmits {
   add: [type: string, x: number, y: number]
   beginChange: []
   select: [id: string | null]
+  'set-tool': [tool: ZplDesignerTool]
+  'update:grid': [grid: Partial<ZplGridConfig>]
   move: [id: string, x: number, y: number]
   resize: [id: string, width: number, height: number]
   rotate: [id: string, rotation: number]

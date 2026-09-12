@@ -1,5 +1,0 @@
-- [ ] The table only accepts two columns! which is wrong and need fix in backend api. 
-- [ ] Need layer system in frontend.
-- [ ] Need copy button in generated zpl.
-- [ ] Need to send the preview of zlp from backend as image.
-- [ ] Need upgrade to the grid container and add some buttons like one for `Hand` and one for `Selection` (which is a mouse pointer icon) etc.

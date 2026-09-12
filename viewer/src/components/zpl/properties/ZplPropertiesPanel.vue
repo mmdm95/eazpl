@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {computed} from 'vue'
-import {BaseCard, BaseInput} from '@/components/base'
-import {ZplAttributeEditor, ZplTableRowsEditor} from './'
-import type {ZplPropertiesPanelEmits, ZplPropertiesPanelProps} from './types'
+import { computed } from 'vue'
+import { BaseCard, BaseInput } from '@/components/base'
+import { ZplAttributeEditor, ZplTableRowsEditor } from './'
+import type { ZplPropertiesPanelEmits, ZplPropertiesPanelProps } from './types'
 
 const props = defineProps<ZplPropertiesPanelProps>()
 const emit = defineEmits<ZplPropertiesPanelEmits>()
@@ -14,7 +14,7 @@ const visibleAttributes = computed(() =>
 )
 </script>
 <template>
-  <section class="flex h-full flex-col gap-4 overflow-y-auto">
+  <section class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
     <h2 class="text-sm font-semibold uppercase tracking-wide text-content-muted">Properties</h2>
 
     <BaseCard v-if="!instance || !definition" variant="outline">
@@ -36,28 +36,28 @@ const visibleAttributes = computed(() =>
             type="number"
             label="X"
             min="0"
-            @update:model-value="emit('update-geometry', instance.id, {x: Number($event)})"
+            @update:model-value="emit('update-geometry', instance.id, { x: Number($event) })"
           />
           <BaseInput
             :model-value="instance.y"
             type="number"
             label="Y"
             min="0"
-            @update:model-value="emit('update-geometry', instance.id, {y: Number($event)})"
+            @update:model-value="emit('update-geometry', instance.id, { y: Number($event) })"
           />
           <BaseInput
             :model-value="instance.width"
             type="number"
             label="Width"
             min="1"
-            @update:model-value="emit('update-geometry', instance.id, {width: Number($event)})"
+            @update:model-value="emit('update-geometry', instance.id, { width: Number($event) })"
           />
           <BaseInput
             :model-value="instance.height"
             type="number"
             label="Height"
             min="1"
-            @update:model-value="emit('update-geometry', instance.id, {height: Number($event)})"
+            @update:model-value="emit('update-geometry', instance.id, { height: Number($event) })"
           />
           <BaseInput
             v-if="definition.rotatable !== false"
@@ -66,7 +66,7 @@ const visibleAttributes = computed(() =>
             label="Rotation"
             min="0"
             max="359"
-            @update:model-value="emit('update-geometry', instance.id, {rotation: Number($event)})"
+            @update:model-value="emit('update-geometry', instance.id, { rotation: Number($event) })"
           />
         </div>
       </BaseCard>
@@ -82,7 +82,10 @@ const visibleAttributes = computed(() =>
           />
 
           <ZplTableRowsEditor
-            v-if="instance.type === 'table' && definition.attributes.some((attribute) => attribute.name === 'rows')"
+            v-if="
+              instance.type === 'table' &&
+              definition.attributes.some((attribute) => attribute.name === 'rows')
+            "
             :columns="Number(instance.attributes.columns ?? 2)"
             :model-value="instance.attributes.rows"
             @update:model-value="emit('update-attribute', instance.id, 'rows', $event)"
