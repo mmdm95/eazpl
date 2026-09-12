@@ -28,6 +28,7 @@ class Font implements RendererInterface
      * @param string $fontName
      * @param int $height
      * @param int|null $width
+     * @param FieldOrientationEnums|string|null $orientation
      * @param string|null $fontFacePath
      */
     public function __construct(
