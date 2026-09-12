@@ -40,9 +40,7 @@ final class ZplComponentRegistry
 
     public function create(array $instance): RendererInterface
     {
-        $definition = $this->get($instance['type']);
-
-        return $definition->create($instance);
+        return $this->get($instance['type'])->create($instance);
     }
 
     private function registerDefaults(): void
