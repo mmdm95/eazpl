@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue'
-import type {CSSProperties} from 'vue'
-import type {ZplCanvasComponentEmits, ZplCanvasComponentProps} from './types'
+import { computed, ref } from 'vue'
+import type { CSSProperties } from 'vue'
+import type { ZplCanvasComponentEmits, ZplCanvasComponentProps } from './types'
 
 const props = defineProps<ZplCanvasComponentProps>()
 const emit = defineEmits<ZplCanvasComponentEmits>()
@@ -30,9 +30,10 @@ const style = computed<CSSProperties>(() => ({
 }))
 
 const previewText = computed(() => {
-  const value = props.instance.attributes.text
-    ?? props.instance.attributes.value
-    ?? props.instance.attributes.data
+  const value =
+    props.instance.attributes.text ??
+    props.instance.attributes.value ??
+    props.instance.attributes.data
   return typeof value === 'string' && value ? value : props.definition.name
 })
 
@@ -44,6 +45,7 @@ const imageSource = computed(() => {
 function startDrag(event: PointerEvent, mode: DragMode): void {
   event.stopPropagation()
   emit('select', props.instance.id)
+  if (props.locked) return
   if (mode === 'rotate' && props.definition.rotatable === false) return
   emit('beginChange')
   dragState.value = {
@@ -79,7 +81,8 @@ function onPointerMove(event: PointerEvent): void {
   if (!bounds) return
   const centerX = bounds.left + bounds.width / 2
   const centerY = bounds.top + bounds.height / 2
-  const rotation = (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI + 90
+  const rotation =
+    (Math.atan2(event.clientY - centerY, event.clientX - centerX) * 180) / Math.PI + 90
   emit('rotate', props.instance.id, (rotation + 360) % 360)
 }
 
@@ -93,7 +96,9 @@ function endDrag(event: PointerEvent): void {
     ref="root"
     :class="[
       'absolute select-none rounded-control border bg-surface transition-shadow',
-      selected ? 'z-20 border-primary shadow-control-lg' : 'z-10 border-border hover:border-primary/60',
+      selected
+        ? 'z-20 border-primary shadow-control-lg'
+        : 'z-10 border-border hover:border-primary/60',
     ]"
     :style="style"
     tabindex="0"
@@ -104,33 +109,41 @@ function endDrag(event: PointerEvent): void {
     @pointerup="endDrag"
     @pointercancel="endDrag"
   >
-    <div class="pointer-events-none flex h-full w-full items-center justify-center overflow-hidden p-1">
+    <div
+      class="pointer-events-none flex h-full w-full items-center justify-center overflow-hidden p-1"
+    >
       <img
         v-if="definition.preview === 'image' && imageSource"
         :src="imageSource"
         :alt="definition.name"
         class="h-full w-full object-contain"
       />
-      <span v-else-if="definition.preview === 'text'" class="w-full truncate text-center text-xs text-content">
+      <span
+        v-else-if="definition.preview === 'text'"
+        class="w-full truncate text-center text-xs text-content"
+      >
         {{ previewText }}
       </span>
       <div
         v-else-if="definition.preview === 'shape'"
         class="h-full w-full rounded-control border-2 border-content"
       />
-      <div v-else-if="definition.preview === 'table'" class="grid h-full w-full grid-cols-2 gap-px bg-border">
+      <div
+        v-else-if="definition.preview === 'table'"
+        class="grid h-full w-full grid-cols-2 gap-px bg-border"
+      >
         <div v-for="index in 4" :key="index" class="min-h-0 bg-surface" />
       </div>
       <div v-else class="h-[70%] w-[70%] rounded-control bg-content/90" />
     </div>
 
     <span
-      v-if="selected"
+      v-if="selected && !locked"
       class="absolute -top-2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-pill border border-primary bg-primary"
       @pointerdown="startDrag($event, 'rotate')"
     />
     <span
-      v-if="selected && definition.resizable !== false"
+      v-if="selected && !locked && definition.resizable !== false"
       class="absolute -bottom-1 -right-1 h-3 w-3 cursor-nwse-resize rounded-pill border border-primary bg-primary"
       @pointerdown="startDrag($event, 'resize')"
     />

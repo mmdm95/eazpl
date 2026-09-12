@@ -11,6 +11,7 @@ use Eazpl\App\Middleware\JsonBodyMiddleware;
 use Eazpl\App\Routes\ApiRoutes;
 use Eazpl\App\Services\ZplComponentRegistry;
 use Eazpl\App\Services\ZplDesignerGenerator;
+use Eazpl\App\Services\ZplPreviewRenderer;
 use Eazpl\App\Validation\ComponentAttributeValidator;
 use Eazpl\App\Validation\DesignerStateValidator;
 use League\Container\Container;
@@ -31,6 +32,7 @@ final class Bootstrap
         );
         $container->add(DesignerStateValidator::class);
         $container->add(ComponentAttributeValidator::class);
+        $container->add(ZplPreviewRenderer::class);
         $container->add(
             ZplComponentController::class,
             static fn (): ZplComponentController => new ZplComponentController(
@@ -44,6 +46,7 @@ final class Bootstrap
                 $container->get(ZplDesignerGenerator::class),
                 $container->get(DesignerStateValidator::class),
                 $container->get(ComponentAttributeValidator::class),
+                $container->get(ZplPreviewRenderer::class),
             ),
         );
 

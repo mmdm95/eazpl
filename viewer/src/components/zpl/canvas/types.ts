@@ -1,4 +1,10 @@
-import type {ZplComponentDefinition, ZplComponentInstance, ZplGridConfig, ZplLabelConfig} from '@/types/zpl'
+import type {
+  ZplComponentDefinition,
+  ZplComponentInstance,
+  ZplDesignerTool,
+  ZplGridConfig,
+  ZplLabelConfig,
+} from '@/types/zpl'
 
 export interface ZplCanvasProps {
   label: ZplLabelConfig
@@ -7,6 +13,7 @@ export interface ZplCanvasProps {
   components: ZplComponentInstance[]
   definitions: ZplComponentDefinition[]
   selectedComponentId: string | null
+  activeTool: ZplDesignerTool
 }
 
 export interface ZplCanvasEmits {
@@ -23,6 +30,7 @@ export interface ZplCanvasComponentProps {
   definition: ZplComponentDefinition
   zoom: number
   selected: boolean
+  locked: boolean
 }
 
 export interface ZplCanvasComponentEmits {

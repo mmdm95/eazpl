@@ -125,7 +125,7 @@ The Vite development server proxies `/api` to the PHP API. The public endpoints 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/zpl/components` | Return backend-defined components and attribute metadata |
-| `POST` | `/api/zpl/generate` | Validate designer state and generate ZPL with the PHP library |
+| `POST` | `/api/zpl/generate` | Validate designer state, generate ZPL, and return a Labelary PNG preview |
 
 ### Application Commands
 

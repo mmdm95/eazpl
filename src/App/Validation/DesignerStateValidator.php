@@ -19,11 +19,14 @@ final class DesignerStateValidator
             V::key('type', V::stringType()->length(1, 64)),
             V::key('x', V::numericVal()->between(0, 32000)),
             V::key('y', V::numericVal()->between(0, 32000)),
-            V::optional(V::key('width', V::numericVal()->between(1, 32000))),
-            V::optional(V::key('height', V::numericVal()->between(1, 32000))),
-            V::optional(V::key('rotation', V::intVal()->between(0, 359))),
+            V::key('width', V::numericVal()->between(1, 32000), false),
+            V::key('height', V::numericVal()->between(1, 32000), false),
+            V::key('rotation', V::intVal()->between(0, 359), false),
+            V::key('visible', V::boolVal(), false),
+            V::key('locked', V::boolVal(), false),
             V::key('attributes', V::arrayVal()),
         )))->key('selectedComponentId', V::nullable(V::stringType()->length(1, 128)))
+            ->key('activeTool', V::in(['selection', 'hand']), false)
             ->key('zoom', V::numericVal()->between(0.1, 4))
             ->key('grid', V::allOf(
                 V::key('enabled', V::boolVal()),

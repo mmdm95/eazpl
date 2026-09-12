@@ -1,12 +1,5 @@
 export type ZplAttributeType =
-  | 'string'
-  | 'text'
-  | 'number'
-  | 'boolean'
-  | 'select'
-  | 'color'
-  | 'image'
-  | 'json'
+  'string' | 'text' | 'number' | 'boolean' | 'select' | 'color' | 'image' | 'json'
 
 export interface ZplAttributeOption {
   label: string
@@ -44,6 +37,8 @@ export interface ZplComponentInstance {
   width?: number
   height?: number
   rotation?: number
+  visible?: boolean
+  locked?: boolean
   attributes: Record<string, unknown>
 }
 
@@ -64,9 +59,12 @@ export interface ZplDesignerState {
   label: ZplLabelConfig
   components: ZplComponentInstance[]
   selectedComponentId: string | null
+  activeTool: ZplDesignerTool
   zoom: number
   grid: ZplGridConfig
 }
+
+export type ZplDesignerTool = 'selection' | 'hand'
 
 export interface ZplApiError {
   message: string

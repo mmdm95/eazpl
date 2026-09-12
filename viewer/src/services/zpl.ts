@@ -1,4 +1,4 @@
-import type {ZplComponentDefinition, ZplDesignerState} from '@/types/zpl'
+import type { ZplComponentDefinition, ZplDesignerState } from '@/types/zpl'
 
 interface ApiEnvelope<T> {
   data?: T
@@ -6,6 +6,12 @@ interface ApiEnvelope<T> {
     message?: string
     errors?: Record<string, unknown>
   }
+}
+
+export interface GeneratedZpl {
+  zpl: string
+  preview: string | null
+  previewError: string | null
 }
 
 export class ZplApiError extends Error {
@@ -25,7 +31,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       headers: {
-        ...(init?.body ? {'Content-Type': 'application/json'} : {}),
+        ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
         ...init?.headers,
       },
     })
@@ -45,7 +51,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     return payload.data
   } catch (error) {
     if (error instanceof ZplApiError) throw error
-    throw new ZplApiError('Unable to reach the ZPL API. Start the PHP API and refresh the designer.')
+    throw new ZplApiError(
+      'Unable to reach the ZPL API. Start the PHP API and refresh the designer.',
+    )
   }
 }
 
@@ -53,9 +61,9 @@ export function getZplComponents(): Promise<ZplComponentDefinition[]> {
   return request<ZplComponentDefinition[]>('/zpl/components')
 }
 
-export function generateZpl(state: ZplDesignerState): Promise<string> {
-  return request<{zpl: string}>('/zpl/generate', {
+export function generateZpl(state: ZplDesignerState): Promise<GeneratedZpl> {
+  return request<GeneratedZpl>('/zpl/generate', {
     method: 'POST',
     body: JSON.stringify(state),
-  }).then((payload) => payload.zpl)
+  })
 }

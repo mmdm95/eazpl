@@ -1,4 +1,4 @@
-import type {ZplComponentDefinition, ZplComponentInstance} from '@/types/zpl'
+import type { ZplComponentDefinition, ZplComponentInstance } from '@/types/zpl'
 
 export interface ZplLayersPanelProps {
   components: ZplComponentInstance[]
@@ -11,4 +11,6 @@ export interface ZplLayersPanelEmits {
   duplicate: [id: string]
   remove: [id: string]
   move: [id: string, direction: -1 | 1]
+  'toggle-visibility': [id: string]
+  'toggle-lock': [id: string]
 }

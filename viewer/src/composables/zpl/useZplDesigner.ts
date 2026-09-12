@@ -1,10 +1,6 @@
-import {computed, ref} from 'vue'
-import {useZplHistory} from './useZplHistory'
-import type {
-  ZplComponentDefinition,
-  ZplComponentInstance,
-  ZplDesignerState,
-} from '@/types/zpl'
+import { computed, ref } from 'vue'
+import { useZplHistory } from './useZplHistory'
+import type { ZplComponentDefinition, ZplComponentInstance, ZplDesignerState } from '@/types/zpl'
 
 function createId(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
@@ -13,11 +9,12 @@ function createId(): string {
 
 function defaultState(): ZplDesignerState {
   return {
-    label: {width: 812, height: 500, dpi: 203, orientation: 'portrait'},
+    label: { width: 812, height: 500, dpi: 203, orientation: 'portrait' },
     components: [],
     selectedComponentId: null,
+    activeTool: 'selection',
     zoom: 1,
-    grid: {enabled: true, size: 10, snap: true},
+    grid: { enabled: true, size: 10, snap: true },
   }
 }
 
@@ -26,14 +23,21 @@ export function useZplDesigner() {
   const history = useZplHistory<ZplDesignerState>()
 
   const selectedComponent = computed<ZplComponentInstance | null>(
-    () => state.value.components.find((component) => component.id === state.value.selectedComponentId) ?? null,
+    () =>
+      state.value.components.find(
+        (component) => component.id === state.value.selectedComponentId,
+      ) ?? null,
   )
 
   function recordHistory(): void {
     history.record(state.value)
   }
 
-  function addComponent(definition: ZplComponentDefinition, x: number, y: number): ZplComponentInstance {
+  function addComponent(
+    definition: ZplComponentDefinition,
+    x: number,
+    y: number,
+  ): ZplComponentInstance {
     recordHistory()
 
     const instance: ZplComponentInstance = {
@@ -44,6 +48,8 @@ export function useZplDesigner() {
       width: definition.defaultWidth ?? 100,
       height: definition.defaultHeight ?? 30,
       rotation: 0,
+      visible: true,
+      locked: false,
       attributes: Object.fromEntries(
         definition.attributes.map((attribute) => [attribute.name, attribute.default ?? null]),
       ),
@@ -66,12 +72,7 @@ export function useZplDesigner() {
     component.y = Math.max(0, Math.round(y))
   }
 
-  function resizeComponent(
-    id: string,
-    width: number,
-    height: number,
-    record = true,
-  ): void {
+  function resizeComponent(id: string, width: number, height: number, record = true): void {
     if (record) recordHistory()
     const component = state.value.components.find((item) => item.id === id)
     if (!component) return
@@ -138,6 +139,27 @@ export function useZplDesigner() {
     components[target] = component
   }
 
+  function setActiveTool(tool: ZplDesignerState['activeTool']): void {
+    state.value.activeTool = tool
+  }
+
+  function toggleComponentVisibility(id: string): void {
+    recordHistory()
+    const component = state.value.components.find((item) => item.id === id)
+    if (!component) return
+    component.visible = !(component.visible ?? true)
+    if (component.visible === false && state.value.selectedComponentId === id) {
+      state.value.selectedComponentId = null
+    }
+  }
+
+  function toggleComponentLock(id: string): void {
+    recordHistory()
+    const component = state.value.components.find((item) => item.id === id)
+    if (!component) return
+    component.locked = !(component.locked ?? false)
+  }
+
   function updateLabel(label: Partial<ZplDesignerState['label']>): void {
     recordHistory()
     Object.assign(state.value.label, label)
@@ -184,6 +206,9 @@ export function useZplDesigner() {
     rotateComponent,
     selectComponent,
     setZoom,
+    setActiveTool,
+    toggleComponentLock,
+    toggleComponentVisibility,
     undo,
     updateAttribute,
     updateGeometry,

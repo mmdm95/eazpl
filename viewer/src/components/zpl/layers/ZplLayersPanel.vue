@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {computed} from 'vue'
-import {ArrowDown, ArrowUp, Copy, Trash2} from '@lucide/vue'
-import {BaseButton} from '@/components/base'
-import type {ZplLayersPanelEmits, ZplLayersPanelProps} from './types'
+import { computed } from 'vue'
+import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, Lock, LockOpen, Trash2 } from '@lucide/vue'
+import { BaseButton } from '@/components/base'
+import type { ZplLayersPanelEmits, ZplLayersPanelProps } from './types'
 
 const props = defineProps<ZplLayersPanelProps>()
 const emit = defineEmits<ZplLayersPanelEmits>()
@@ -15,7 +15,10 @@ const names = computed(
   <section class="flex min-h-0 flex-1 flex-col gap-3">
     <h2 class="text-sm font-semibold uppercase tracking-wide text-content-muted">Layers</h2>
 
-    <div v-if="components.length === 0" class="rounded-control border border-border bg-surface p-3 text-sm text-content-muted">
+    <div
+      v-if="components.length === 0"
+      class="rounded-control border border-border bg-surface p-3 text-sm text-content-muted"
+    >
       No placed components yet.
     </div>
 
@@ -42,6 +45,20 @@ const names = computed(
             {{ component.x }}, {{ component.y }} · layer {{ components.length - index }}
           </span>
         </button>
+        <BaseButton
+          size="sm"
+          variant="ghost"
+          :icon="component.visible === false ? EyeOff : Eye"
+          :aria-label="`${component.visible === false ? 'Show' : 'Hide'} ${component.type}`"
+          @click="emit('toggle-visibility', component.id)"
+        />
+        <BaseButton
+          size="sm"
+          variant="ghost"
+          :icon="component.locked ? Lock : LockOpen"
+          :aria-label="`${component.locked ? 'Unlock' : 'Lock'} ${component.type}`"
+          @click="emit('toggle-lock', component.id)"
+        />
         <BaseButton
           size="sm"
           variant="ghost"

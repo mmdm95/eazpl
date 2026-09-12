@@ -15,6 +15,10 @@ final class ZplDesignerGenerator
         $printer = new ZplPrinter();
 
         foreach ($state['components'] ?? [] as $instance) {
+            if (($instance['visible'] ?? true) === false) {
+                continue;
+            }
+
             $printer->addElement($this->registry->create($instance));
         }
 
