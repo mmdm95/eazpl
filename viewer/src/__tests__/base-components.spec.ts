@@ -308,6 +308,35 @@ describe('BaseDropdown', () => {
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['blue']])
   })
+
+  it('renders a fixed menu and keeps it within the viewport', async () => {
+    const wrapper = mount(BaseDropdown, {
+      props: { options, modelValue: null },
+      attachTo: document.body,
+    })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+    Object.defineProperty(trigger.element, 'getBoundingClientRect', {
+      value: () =>
+        ({
+          left: 1000,
+          top: 100,
+          right: 1080,
+          bottom: 140,
+          width: 80,
+          height: 40,
+        }) as DOMRect,
+    })
+
+    await trigger.trigger('click')
+
+    const menuStyle = wrapper.find('[role="listbox"]').attributes('style')
+    expect(menuStyle).toContain('position: fixed')
+    expect(menuStyle).toContain('left: 936px')
+    expect(menuStyle).toContain('top: 148px')
+
+    wrapper.unmount()
+  })
 })
 
 describe('Base design tokens', () => {

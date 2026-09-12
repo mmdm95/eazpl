@@ -31,10 +31,20 @@ abstract class AbstractDecoder implements DecoderInterface
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
 
-                // weighted grayscale (integer math, no division)
-                $gray = ($r * 30) + ($g * 59) + ($b * 11);
+                // Use the darkest of the three channels rather than a
+                // luma-weighted average. Luma weighting (R*0.30 + G*0.59 +
+                // B*0.11) is tuned for photographic brightness perception,
+                // and it under-weights blue so heavily that mid-brightness
+                // saturated colors (blues, purples, some reds) can compute
+                // as "light" and vanish entirely even though they're
+                // clearly visible ink against a white background. The
+                // darkest channel is a much better proxy for "is this pixel
+                // colored/inked at all" and correctly catches logos in any
+                // hue, not just ones that happen to be dark overall.
+                $darkest = $r < $g ? $r : $g;
+                $darkest = $b < $darkest ? $b : $darkest;
 
-                if ($gray < 12800) { // 128 * 100
+                if ($darkest < 128) {
                     $byte |= $bitMask;
                 }
 
@@ -92,7 +102,9 @@ abstract class AbstractDecoder implements DecoderInterface
      */
     protected function compressTrailingZerosOrOnes(string $row): string
     {
-        return preg_replace(['/0+$/', '/F+$/'], [',', '!'], $row);
+        // bin2hex() always produces lowercase hex, so this must match
+        // case-insensitively or the trailing "all black" shortcut never fires.
+        return preg_replace(['/0+$/', '/f+$/i'], [',', '!'], $row);
     }
 
     /**

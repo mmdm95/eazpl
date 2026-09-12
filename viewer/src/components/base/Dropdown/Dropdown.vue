@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, ChevronDown, LoaderCircle, X } from '@lucide/vue'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue'
 import { cn } from '@/utils'
 import { resolveClasses, sizeClasses, variantClasses } from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
@@ -40,6 +40,8 @@ const emit = defineEmits<{
 }>()
 
 const rootRef = ref<HTMLDivElement | null>(null)
+const triggerRef = ref<HTMLButtonElement | null>(null)
+const menuRef = ref<HTMLUListElement | null>(null)
 const isOpen = ref(false)
 const activeIndex = ref(-1)
 const generatedId = `base-dropdown-${Math.random().toString(36).slice(2, 10)}`
@@ -49,9 +51,18 @@ const selectedOption = computed(() =>
 )
 const enabledOptions = computed(() => props.options.filter((option) => !option.disabled))
 const isDisabled = computed(() => props.disabled || props.loading)
+const menuStyle = ref<CSSProperties>({
+  position: 'fixed',
+  top: '0px',
+  left: '0px',
+  visibility: 'hidden',
+})
+const viewportPadding = 8
+const overlayGap = 8
 
 function onDocumentClick(event: MouseEvent): void {
-  if (!rootRef.value?.contains(event.target as Node)) close()
+  const target = event.target as Node
+  if (!rootRef.value?.contains(target) && !menuRef.value?.contains(target)) close()
 }
 
 watch(isOpen, (open) => {
@@ -59,19 +70,35 @@ watch(isOpen, (open) => {
   if (open) {
     emit('open')
     document.addEventListener('mousedown', onDocumentClick)
+    if (typeof window !== 'undefined') {
+      menuStyle.value = { ...menuStyle.value, visibility: 'hidden' }
+      window.addEventListener('resize', updateMenuPosition, { passive: true })
+      window.addEventListener('scroll', updateMenuPosition, { passive: true, capture: true })
+      void nextTick(updateMenuPosition)
+    }
   } else {
     emit('close')
     document.removeEventListener('mousedown', onDocumentClick)
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', updateMenuPosition)
+      window.removeEventListener('scroll', updateMenuPosition, true)
+    }
   }
 })
 
 onBeforeUnmount(() => {
   if (typeof document !== 'undefined') document.removeEventListener('mousedown', onDocumentClick)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', updateMenuPosition)
+    window.removeEventListener('scroll', updateMenuPosition, true)
+  }
 })
 
 function open(): void {
   if (isDisabled.value || isOpen.value) return
   activeIndex.value = enabledOptions.value.findIndex((option) => option.value === props.modelValue)
+  updateMenuPosition()
+  menuStyle.value = { ...menuStyle.value, visibility: 'hidden' }
   isOpen.value = true
 }
 
@@ -146,14 +173,62 @@ function optionClass(option: DropdownOption): string {
   )
 }
 
-function placementClass(): string {
-  const placements: Record<NonNullable<DropdownProps['placement']>, string> = {
-    'bottom-start': 'top-full start-0 mt-overlay-gap',
-    'bottom-end': 'top-full end-0 mt-overlay-gap',
-    'top-start': 'bottom-full start-0 mb-overlay-gap',
-    'top-end': 'bottom-full end-0 mb-overlay-gap',
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), Math.max(min, max))
+}
+
+function updateMenuPosition(): void {
+  if (typeof window === 'undefined') return
+
+  const trigger = triggerRef.value
+  if (!trigger) return
+
+  const triggerRect = trigger.getBoundingClientRect()
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+  const maxMenuWidth = Math.max(0, viewportWidth - viewportPadding * 2)
+  const maxMenuHeight = Math.max(0, viewportHeight - viewportPadding * 2)
+  const menuWidth = Math.min(triggerRect.width, maxMenuWidth)
+  const menuHeight = Math.min(menuRef.value?.offsetHeight ?? 0, maxMenuHeight)
+  const direction = window.getComputedStyle(trigger).direction
+  const isRtl = direction === 'rtl'
+
+  const prefersTop = props.placement.startsWith('top')
+  let placeAbove = prefersTop
+  if (
+    !placeAbove &&
+    triggerRect.bottom + overlayGap + menuHeight > viewportHeight - viewportPadding &&
+    triggerRect.top - overlayGap - menuHeight >= viewportPadding
+  ) {
+    placeAbove = true
+  } else if (
+    placeAbove &&
+    triggerRect.top - overlayGap - menuHeight < viewportPadding &&
+    triggerRect.bottom + overlayGap + menuHeight <= viewportHeight - viewportPadding
+  ) {
+    placeAbove = false
   }
-  return placements[props.placement]
+
+  const unclampedX = props.placement.endsWith('end')
+    ? isRtl
+      ? triggerRect.left
+      : triggerRect.right - menuWidth
+    : isRtl
+      ? triggerRect.right - menuWidth
+      : triggerRect.left
+  const unclampedY = placeAbove
+    ? triggerRect.top - overlayGap - menuHeight
+    : triggerRect.bottom + overlayGap
+
+  menuStyle.value = {
+    position: 'fixed',
+    top: `${clamp(unclampedY, viewportPadding, viewportHeight - viewportPadding - menuHeight)}px`,
+    left: `${clamp(unclampedX, viewportPadding, viewportWidth - viewportPadding - menuWidth)}px`,
+    width: `${menuWidth}px`,
+    maxWidth: `${maxMenuWidth}px`,
+    maxHeight: `${maxMenuHeight}px`,
+    visibility: 'visible',
+  }
 }
 </script>
 
@@ -177,6 +252,7 @@ function placementClass(): string {
 
     <div :class="resolveClasses(props.classes, 'triggerWrapper', 'relative')">
       <button
+        ref="triggerRef"
         :id="dropdownId"
         type="button"
         :class="
@@ -283,13 +359,14 @@ function placementClass(): string {
       >
         <ul
           v-if="isOpen"
+          ref="menuRef"
+          :style="menuStyle"
           :class="
             resolveClasses(
               props.classes,
               'menu',
               cn(
-                'absolute z-40 max-h-menu-max-height w-full overflow-y-auto rounded-overlay border border-border bg-surface-raised p-menu-padding shadow-xl shadow-shadow',
-                placementClass(),
+                'fixed z-40 max-h-menu-max-height overflow-y-auto rounded-overlay border border-border bg-surface-raised p-menu-padding shadow-xl shadow-shadow',
               ),
             )
           "

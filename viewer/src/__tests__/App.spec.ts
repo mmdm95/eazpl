@@ -4,9 +4,9 @@ import { mount } from '@vue/test-utils'
 import App from '../App.vue'
 
 describe('App', () => {
-  it('mounts the base component library demo', () => {
+  it('mounts the ZPL designer', () => {
     const wrapper = mount(App)
-    expect(wrapper.text()).toContain('Base component library')
-    expect(wrapper.text()).toContain('Tabs with moving worm')
+    expect(wrapper.text()).toContain('Components')
+    expect(wrapper.text()).toContain('Properties')
   })
 })

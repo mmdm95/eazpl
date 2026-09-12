@@ -53,7 +53,9 @@ class GdDecoder extends AbstractDecoder
     {
         if (is_resource($image)) {
             return get_resource_type($image) === 'gd';
-        } elseif ($image instanceof GdImage) {
+        }
+
+        if ($image instanceof GdImage) {
             return true;
         }
 
@@ -76,19 +78,55 @@ class GdDecoder extends AbstractDecoder
      */
     public static function fromPath(string $path): static
     {
-        return static::fromString(file_get_contents($path));
+        if (!is_file($path) || !is_readable($path)) {
+            throw new InvalidArgumentException("File not found or not readable: {$path}");
+        }
+
+        $data = file_get_contents($path);
+
+        if ($data === false) {
+            throw new InvalidArgumentException("Could not read file: {$path}");
+        }
+
+        return static::fromString($data);
     }
 
     /**
      * Create a new decoder instance from the specified string.
+     *
+     * GD and libpng can emit warnings for non-fatal metadata issues, such as an
+     * incorrectly formatted PNG iCCP/sRGB profile. Those warnings do not affect
+     * decoding, so they are collected here instead of leaking into API output.
      *
      * @param string $data
      * @return static
      */
     public static function fromString(string $data): static
     {
-        if (false === $image = imagecreatefromstring($data)) {
-            throw new InvalidArgumentException('Could not read image');
+        if ($data === '') {
+            throw new InvalidArgumentException('Could not read image: empty data');
+        }
+
+        $warnings = [];
+        set_error_handler(static function (
+            int $severity,
+            string $message
+        ) use (&$warnings): bool {
+            $warnings[] = $message;
+
+            return true;
+        });
+
+        try {
+            $image = imagecreatefromstring($data);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($image === false) {
+            throw new InvalidArgumentException(
+                'Could not read image' . ($warnings === [] ? '' : ': ' . implode('; ', $warnings)),
+            );
         }
 
         return new static($image);
@@ -110,36 +148,94 @@ class GdDecoder extends AbstractDecoder
         $originalWidth = $this->width();
         $originalHeight = $this->height();
 
-        if (!$width) {
-            $width = (int)(($height / $originalHeight) * $originalWidth);
-        } elseif(!$height) {
-            $height = (int)(($width / $originalWidth) * $originalHeight);
+        if ($originalWidth <= 0 || $originalHeight <= 0) {
+            return $this;
         }
 
-        // Create a new true color image
-        $resizedImage = imagecreatetruecolor($width, $height);
+        if ($width && $height) {
+            // Both dimensions given: fit the image WITHIN the box rather
+            // than stretching it to fill it exactly. Stretching to an
+            // arbitrary width x height ignores the original aspect ratio
+            // and distorts the shape (e.g. a wide logo squashed into a
+            // square). Instead we scale by whichever dimension is more
+            // constraining and center the result on a canvas of exactly
+            // the requested size, padding the rest with transparency.
+            $scale = min($width / $originalWidth, $height / $originalHeight);
+            $scaledWidth = max(1, (int)round($originalWidth * $scale));
+            $scaledHeight = max(1, (int)round($originalHeight * $scale));
+            $canvasWidth = $width;
+            $canvasHeight = $height;
+        } elseif (!$width) {
+            $scaledHeight = $height;
+            $scaledWidth = max(1, (int)round(($height / $originalHeight) * $originalWidth));
+            $canvasWidth = $scaledWidth;
+            $canvasHeight = $scaledHeight;
+        } else { // !$height
+            $scaledWidth = $width;
+            $scaledHeight = max(1, (int)round(($width / $originalWidth) * $originalHeight));
+            $canvasWidth = $scaledWidth;
+            $canvasHeight = $scaledHeight;
+        }
 
-        // Preserve alpha
-        imagesavealpha($resizedImage, true);
-        imagealphablending($resizedImage, false);
+        // Scale the original image onto an intermediate canvas at the
+        // aspect-ratio-correct size.
+        $scaledImage = imagecreatetruecolor($scaledWidth, $scaledHeight);
+        imagesavealpha($scaledImage, true);
+        imagealphablending($scaledImage, false);
+        imagefilledrectangle(
+            $scaledImage,
+            0,
+            0,
+            $scaledWidth,
+            $scaledHeight,
+            imagecolorallocatealpha($scaledImage, 0, 0, 0, 127)
+        );
 
-        // Resize the original image and copy it to the new image
         imagecopyresampled(
-            $resizedImage,
+            $scaledImage,
             $this->image,
             0,
             0,
             0,
             0,
-            $width,
-            $height,
+            $scaledWidth,
+            $scaledHeight,
             $originalWidth,
             $originalHeight
         );
 
-        $this->image = $resizedImage;
+        if ($canvasWidth === $scaledWidth && $canvasHeight === $scaledHeight) {
+            $finalImage = $scaledImage;
+        } else {
+            // Center the scaled image on the requested canvas, padding
+            // the surrounding area with transparency (never stretching).
+            $finalImage = imagecreatetruecolor($canvasWidth, $canvasHeight);
+            imagesavealpha($finalImage, true);
+            imagealphablending($finalImage, false);
+            imagefilledrectangle(
+                $finalImage,
+                0,
+                0,
+                $canvasWidth,
+                $canvasHeight,
+                imagecolorallocatealpha($finalImage, 0, 0, 0, 127)
+            );
 
-        imagedestroy($resizedImage);
+            $offsetX = (int)floor(($canvasWidth - $scaledWidth) / 2);
+            $offsetY = (int)floor(($canvasHeight - $scaledHeight) / 2);
+
+            imagecopy($finalImage, $scaledImage, $offsetX, $offsetY, 0, 0, $scaledWidth, $scaledHeight);
+            imagedestroy($scaledImage);
+        }
+
+        // Free the ORIGINAL image now that we've copied from it.
+        // (Previously this destroyed $resizedImage itself, since $this->image
+        // and $resizedImage reference the same underlying GD resource once
+        // assigned — that left $this->image pointing at a destroyed image,
+        // so any decode() called after resize() would fail or read garbage.)
+        $oldImage = $this->image;
+        $this->image = $finalImage;
+        imagedestroy($oldImage);
 
         return $this;
     }

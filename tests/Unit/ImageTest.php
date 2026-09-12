@@ -27,6 +27,19 @@ it('tests GdDecoder functionality', function () {
         ->and($mockDecoder->getBitAt(10, 10))->toBe(255);
 });
 
+it('creates a decoder from valid image data without emitting warnings', function () {
+    $decoder = GdDecoder::fromString(
+        file_get_contents(dirname(__DIR__) . '/assets/logo.png') ?: '',
+    );
+
+    expect($decoder->width())->toBeGreaterThan(0)
+        ->and($decoder->height())->toBeGreaterThan(0);
+});
+
+it('throws a clean exception for invalid image data', function () {
+    GdDecoder::fromString('not an image');
+})->throws(InvalidArgumentException::class, 'Could not read image');
+
 it('renders the image correctly', function () {
     $mockDecoder = Mockery::mock(DecoderInterface::class);
 

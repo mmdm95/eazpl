@@ -104,6 +104,49 @@ $printer
     ->setPort(9100);
 ```
 
+## Visual ZPL Designer
+
+The bundled viewer is a Vue 3 + Tailwind CSS drag-and-drop designer. It discovers component definitions from PHP, so adding a component to `src/App/Services/ZplComponentRegistry.php` makes it available in the UI without frontend changes.
+
+Run the API and viewer in two terminals:
+
+```bash
+php bin/eazpl serve
+```
+
+```bash
+cd viewer
+npm install
+npm run dev
+```
+
+The Vite development server proxies `/api` to the PHP API. The public endpoints are:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/zpl/components` | Return backend-defined components and attribute metadata |
+| `POST` | `/api/zpl/generate` | Validate designer state and generate ZPL with the PHP library |
+
+### Application Commands
+
+```bash
+php bin/eazpl migrate          # run pending migrations
+php bin/eazpl migrate:reset    # roll back all migrations
+php bin/eazpl migrate:status   # show applied and pending migrations
+php bin/eazpl serve            # start the PHP API server
+```
+
+The same commands are available through Composer:
+
+```bash
+composer eazpl:migrate
+composer eazpl:reset
+composer eazpl:status
+composer eazpl:serve
+```
+
+Database defaults target local MySQL (`127.0.0.1`, `eazpl`, `root`). Override them with `EAZPL_DB_DRIVER`, `EAZPL_DB_HOST`, `EAZPL_DB_PORT`, `EAZPL_DB_DATABASE`, `EAZPL_DB_USERNAME`, and `EAZPL_DB_PASSWORD`.
+
 ## Core Concepts
 
 ### ZplPrinter

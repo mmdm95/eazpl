@@ -26,6 +26,10 @@ class BarcodeOption
         protected BarcodeModeEnums|string|null      $mode = null
     )
     {
+        $this->orientation = is_null($this->orientation)
+            ? null
+            : RenderUtils::getValidFieldOrientation($this->orientation);
+
         if (!is_null($this->height)) {
             $this->height = RenderUtils::getValidValue($this->height, 'Height', 1, 32_000);
         }
@@ -42,7 +46,9 @@ class BarcodeOption
      */
     public function setOrientation(FieldOrientationEnums|string|null $orientation): static
     {
-        $this->orientation = $orientation;
+        $this->orientation = is_null($orientation)
+            ? null
+            : RenderUtils::getValidFieldOrientation($orientation);
         return $this;
     }
 
@@ -52,7 +58,9 @@ class BarcodeOption
      */
     public function setHeight(?int $height): static
     {
-        $this->height = $height;
+        $this->height = is_null($height)
+            ? null
+            : RenderUtils::getValidValue($height, 'Height', 1, 32_000);
         return $this;
     }
 
@@ -62,7 +70,7 @@ class BarcodeOption
      */
     public function includeLine(BoolEnums|string|bool|null $includeLine): static
     {
-        $this->includeLine = $includeLine;
+        $this->includeLine = RenderUtils::getValidBoolean($includeLine);
         return $this;
     }
 
@@ -72,7 +80,7 @@ class BarcodeOption
      */
     public function lineAbove(BoolEnums|string|bool|null $lineAbove): static
     {
-        $this->lineAbove = $lineAbove;
+        $this->lineAbove = RenderUtils::getValidBoolean($lineAbove);
         return $this;
     }
 
@@ -82,7 +90,7 @@ class BarcodeOption
      */
     public function checkDigit(BoolEnums|string|bool|null $checkDigit): static
     {
-        $this->checkDigit = $checkDigit;
+        $this->checkDigit = RenderUtils::getValidBoolean($checkDigit);
         return $this;
     }
 
@@ -92,7 +100,7 @@ class BarcodeOption
      */
     public function setMode(BarcodeModeEnums|string|null $mode): static
     {
-        $this->mode = $mode;
+        $this->mode = RenderUtils::getValidBarcodeMode($mode);
         return $this;
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use Eazpl\Elements\Barcode;
+use Eazpl\Elements\BarcodeOption;
 
 it('renders a barcode with default width ratio', function () {
     $barcode = new Barcode(100, 200, '123456', 80);
@@ -34,4 +35,21 @@ it('respects width ratio clamping (above 3 sets to 3)', function () {
 it('allows valid width ratio of 2.5', function () {
     $barcode = (new Barcode(0, 0, 'TEST', 60))->widthRatio(2.5);
     expect($barcode->render())->toContain('^BY5,2.5,60');
+});
+
+it('normalizes barcode option union values supplied to the constructor', function () {
+    $options = new BarcodeOption('R', null, 'Y', true, false, 'N');
+
+    expect($options->render())->toBe('R,10,Y,Y,N,N');
+});
+
+it('normalizes barcode option union values supplied through setters', function () {
+    $options = (new BarcodeOption())
+        ->setOrientation('R')
+        ->includeLine('Y')
+        ->lineAbove(true)
+        ->checkDigit('N')
+        ->setMode('N');
+
+    expect($options->render())->toBe('R,10,Y,Y,N,N');
 });
