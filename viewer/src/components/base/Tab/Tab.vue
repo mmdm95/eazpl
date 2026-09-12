@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue'
+import {computed, type CSSProperties, nextTick, onBeforeUnmount, ref, watch} from 'vue'
 
-import { provideBaseTabContext, type BaseTabContext } from './context'
+import {type BaseTabContext, provideBaseTabContext} from './context'
 import TabHeader from './TabHeader.vue'
 import TabPanel from './TabPanel.vue'
 import TabSection from './TabSection.vue'
 import Tabs from './Tabs.vue'
-import { resolveClasses } from '../shared'
-import type { TabItem, TabItemValue, TabProps } from './types'
+import {resolveClasses} from '../shared'
+import type {TabItem, TabItemValue, TabProps} from './types'
 
-defineOptions({ name: 'BaseTab' })
+defineOptions({name: 'BaseTab'})
 
 const props = withDefaults(defineProps<TabProps>(), {
   modelValue: undefined,
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 const registeredItems = ref<TabItem[]>([])
 const internalValue = ref<TabItemValue | undefined>()
 const tabElements = new Map<TabItemValue, HTMLElement>()
-const indicator = ref({ x: 0, y: 0, width: 0, height: 0 })
+const indicator = ref({x: 0, y: 0, width: 0, height: 0})
 
 const contextItems = computed(() => (props.items.length > 0 ? props.items : registeredItems.value))
 const activeValue = computed<TabItemValue | undefined>(() => {
@@ -79,13 +79,13 @@ function parsePixelLength(value: string | undefined): number {
 
 function updateIndicator(): void {
   if (activeValue.value === undefined) {
-    indicator.value = { x: 0, y: 0, width: 0, height: 0 }
+    indicator.value = {x: 0, y: 0, width: 0, height: 0}
     return
   }
 
   const element = tabElements.get(activeValue.value)
   if (!element) {
-    indicator.value = { x: 0, y: 0, width: 0, height: 0 }
+    indicator.value = {x: 0, y: 0, width: 0, height: 0}
     return
   }
 
@@ -97,11 +97,11 @@ function updateIndicator(): void {
   const inlineStartPosition = navRect
     ? isRtl
       ? navRect.right -
-        parsePixelLength(navStyle?.borderRightWidth) -
-        parsePixelLength(navStyle?.paddingRight)
+      parsePixelLength(navStyle?.borderRightWidth) -
+      parsePixelLength(navStyle?.paddingRight)
       : navRect.left +
-        parsePixelLength(navStyle?.borderLeftWidth) +
-        parsePixelLength(navStyle?.paddingLeft)
+      parsePixelLength(navStyle?.borderLeftWidth) +
+      parsePixelLength(navStyle?.paddingLeft)
     : 0
 
   indicator.value = {
@@ -176,7 +176,9 @@ const rootClass = computed(() =>
   resolveClasses(
     props.classes,
     'root',
-    props.orientation === 'horizontal' ? 'flex w-full flex-col' : 'flex w-full items-start',
+    props.orientation === 'horizontal'
+      ? 'flex h-full min-h-0 w-full flex-1 flex-col'
+      : 'flex h-full min-h-0 w-full flex-1 items-start',
   ),
 )
 
@@ -184,7 +186,9 @@ const panelContainerClass = computed(() =>
   resolveClasses(
     props.classes,
     'panelContainer',
-    props.orientation === 'horizontal' ? 'w-full min-w-0' : 'min-w-0 flex-1',
+    props.orientation === 'horizontal'
+      ? 'flex min-h-0 w-full min-w-0 flex-1 flex-col'
+      : 'flex min-h-0 min-w-0 flex-1 flex-col',
   ),
 )
 
@@ -199,7 +203,7 @@ watch(
     }
     void nextTick(updateIndicator)
   },
-  { deep: true },
+  {deep: true},
 )
 
 onBeforeUnmount(() => {
@@ -240,7 +244,7 @@ onBeforeUnmount(() => {
           </template>
           <template #default>
             <slot :name="`panel-${String(activeItem.value)}`" :item="activeItem" :active="true">
-              <TabSection :section="activeItem.content" />
+              <TabSection :section="activeItem.content"/>
             </slot>
           </template>
           <template v-if="$slots[`panel-footer-${String(activeItem.value)}`]" #footer>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Grid3x3, Hand, Magnet, MousePointer2 } from '@lucide/vue'
-import { computed, ref, watch } from 'vue'
-import type { CSSProperties } from 'vue'
-import { BaseButton, BaseTooltip } from '@/components/base'
-import { ZplCanvasComponent } from './'
-import type { ZplCanvasEmits, ZplCanvasProps } from './types'
+import {Grid3x3, Hand, Magnet, MousePointer2} from '@lucide/vue'
+import type {CSSProperties} from 'vue'
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue'
+import {BaseButton, BaseTooltip} from '@/components/base'
+import {ZplCanvasComponent} from './'
+import type {ZplCanvasEmits, ZplCanvasProps} from './types'
 
 const props = defineProps<ZplCanvasProps>()
 const emit = defineEmits<ZplCanvasEmits>()
@@ -30,7 +30,7 @@ interface PanState {
 
 const panState = ref<PanState | null>(null)
 const viewport = ref<HTMLElement | null>(null)
-const panOffset = ref({ x: 0, y: 0 })
+const panOffset = ref({x: 0, y: 0})
 
 const definitionMap = computed(
   () => new Map(props.definitions.map((definition) => [definition.type, definition])),
@@ -51,9 +51,15 @@ function onDrop(event: DragEvent): void {
 function clampPan(): void {
   const viewportElement = viewport.value
   if (!viewportElement) return
+  // Generous boundary: several viewport-widths of slack in every direction,
+  // scaled up further when zoomed in so panning never feels cramped.
   const boundary = Math.max(
-    96,
-    Math.round(Math.min(viewportElement.clientWidth, viewportElement.clientHeight) * 0.4),
+    2000,
+    Math.round(
+      Math.max(viewportElement.clientWidth, viewportElement.clientHeight) *
+      4 *
+      Math.max(props.zoom, 1),
+    ),
   )
   panOffset.value = {
     x: Math.min(boundary, Math.max(-boundary, panOffset.value.x)),
@@ -108,10 +114,51 @@ function onWheel(event: WheelEvent): void {
   emit('zoom', props.zoom + direction)
 }
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false
+  if (target.isContentEditable) return true
+  const tag = target.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+}
+
+function onKeydown(event: KeyboardEvent): void {
+  // Never hijack typing: modifier combos are left alone, and plain letters
+  // are ignored whenever focus is inside a field, textarea, or select.
+  if (event.metaKey || event.ctrlKey || event.altKey) return
+  if (isTypingTarget(event.target)) return
+
+  switch (event.key.toLowerCase()) {
+    case 'v':
+      emit('set-tool', 'selection')
+      break
+    case 'h':
+      emit('set-tool', 'hand')
+      break
+    case 'g':
+      emit('update:grid', {enabled: !props.grid.enabled})
+      break
+    case 's':
+      emit('update:grid', {snap: !props.grid.snap})
+      break
+    default:
+      return
+  }
+
+  event.preventDefault()
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+
 watch(
   () => props.zoom,
   () => {
-    panOffset.value = { x: 0, y: 0 }
+    panOffset.value = {x: 0, y: 0}
   },
 )
 </script>
@@ -135,22 +182,22 @@ watch(
       <div
         class="pointer-events-auto flex items-center gap-0.5 rounded-control border border-border bg-surface/95 p-0.5 shadow-control backdrop-blur"
       >
-        <BaseTooltip content="Selection tool">
+        <BaseTooltip content="Selection tool (V)">
           <BaseButton
             size="sm"
             :variant="activeTool === 'selection' ? 'primary' : 'ghost'"
             :icon="MousePointer2"
-            aria-label="Selection tool"
+            aria-label="Selection tool (V)"
             :aria-pressed="activeTool === 'selection'"
             @click="emit('set-tool', 'selection')"
           />
         </BaseTooltip>
-        <BaseTooltip content="Hand tool">
+        <BaseTooltip content="Hand tool (H)">
           <BaseButton
             size="sm"
             :variant="activeTool === 'hand' ? 'primary' : 'ghost'"
             :icon="Hand"
-            aria-label="Hand tool"
+            aria-label="Hand tool (H)"
             :aria-pressed="activeTool === 'hand'"
             @click="emit('set-tool', 'hand')"
           />
@@ -159,22 +206,22 @@ watch(
       <div
         class="pointer-events-auto flex items-center gap-0.5 rounded-control border border-border bg-surface/95 p-0.5 shadow-control backdrop-blur"
       >
-        <BaseTooltip content="Toggle grid">
+        <BaseTooltip content="Toggle grid (G)">
           <BaseButton
             size="sm"
             :variant="grid.enabled ? 'primary' : 'ghost'"
             :icon="Grid3x3"
-            aria-label="Toggle grid"
+            aria-label="Toggle grid (G)"
             :aria-pressed="grid.enabled"
             @click="emit('update:grid', { enabled: !grid.enabled })"
           />
         </BaseTooltip>
-        <BaseTooltip content="Toggle snap to grid">
+        <BaseTooltip content="Toggle snap to grid (S)">
           <BaseButton
             size="sm"
             :variant="grid.snap ? 'primary' : 'ghost'"
             :icon="Magnet"
-            aria-label="Toggle snap to grid"
+            aria-label="Toggle snap to grid (S)"
             :aria-pressed="grid.snap"
             @click="emit('update:grid', { snap: !grid.snap })"
           />

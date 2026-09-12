@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
-import { cn } from '@/utils'
+import {computed, useSlots} from 'vue'
+import {cn} from '@/utils'
 
 import BaseLucideIcon from '../Icon/Icon.vue'
-import { mergeTabClasses, useBaseTabContext } from './context'
+import {mergeTabClasses, useBaseTabContext} from './context'
 import TabContent from './TabContent.vue'
 import TabFooter from './TabFooter.vue'
 import TabSection from './TabSection.vue'
-import type { TabPanelProps } from './types'
+import type {TabPanelProps} from './types'
 
-defineOptions({ name: 'BaseTabPanel' })
+defineOptions({name: 'BaseTabPanel'})
 
 const props = withDefaults(defineProps<TabPanelProps>(), {
   header: undefined,
@@ -34,7 +34,7 @@ function rootClass(): string {
     'tabPanel',
     'panel',
     cn(
-      'text-control-md leading-relaxed text-content-muted',
+      'flex min-h-0 flex-1 flex-col text-control-md leading-relaxed text-content-muted',
       context.orientation.value === 'horizontal' ? 'pt-content-sm' : 'ps-content-sm',
     ),
   )
@@ -86,7 +86,7 @@ function contentClass(): string {
     context.classes.value,
     'tabContent',
     undefined,
-    'min-w-0 flex-1',
+    'flex min-h-0 min-w-0 flex-1 flex-col',
   )
 }
 
@@ -111,10 +111,10 @@ function footerClass(): string {
   >
     <header v-if="hasHeader" :class="headerClass()">
       <slot name="header" :active="isActive">
-        <BaseLucideIcon v-if="props.icon" :icon="props.icon" :classes="{ root: iconClass() }" />
+        <BaseLucideIcon v-if="props.icon" :icon="props.icon" :classes="{ root: iconClass() }"/>
         <div class="min-w-0">
           <h4 v-if="props.header" :class="titleClass()">
-            <TabSection :section="props.header" />
+            <TabSection :section="props.header"/>
           </h4>
           <p v-if="props.description" :class="descriptionClass()">
             {{ props.description }}
@@ -125,7 +125,7 @@ function footerClass(): string {
 
     <TabContent :classes="{ root: contentClass() }">
       <slot>
-        <TabSection :section="props.content" />
+        <TabSection :section="props.content"/>
       </slot>
     </TabContent>
 
@@ -134,7 +134,7 @@ function footerClass(): string {
       :content="props.footer"
       :classes="{ root: footerClass() }"
     >
-      <slot v-if="$slots.footer" name="footer" :active="isActive" />
+      <slot v-if="$slots.footer" name="footer" :active="isActive"/>
     </TabFooter>
   </div>
 </template>
