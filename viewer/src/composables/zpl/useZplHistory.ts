@@ -1,5 +1,5 @@
-import {computed, ref} from 'vue'
 import type {Ref} from 'vue'
+import {computed, ref} from 'vue'
 
 export function useZplHistory<T>() {
   const past = ref<T[]>([]) as Ref<T[]>

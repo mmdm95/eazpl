@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ChevronDown } from '@lucide/vue'
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
+import {ChevronDown} from '@lucide/vue'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
 import AccordionSection from './AccordionSection.vue'
-import type { AccordionItem, AccordionModelValue, AccordionProps } from './types'
+import type {AccordionItem, AccordionModelValue, AccordionProps} from './types'
 
-defineOptions({ name: 'BaseAccordion' })
+defineOptions({name: 'BaseAccordion'})
 
 const props = withDefaults(defineProps<AccordionProps>(), {
   modelValue: undefined,
@@ -117,7 +117,7 @@ function itemIconClass(item: AccordionItem): string {
               :classes="{ root: itemIconClass(item) }"
             />
             <span :class="resolveClasses(props.classes, 'headerTitle', 'flex-1')">
-              <AccordionSection :section="item.header" />
+              <AccordionSection :section="item.header"/>
             </span>
           </slot>
           <BaseLucideIcon
@@ -158,7 +158,7 @@ function itemIconClass(item: AccordionItem): string {
             "
           >
             <slot :name="`content-${String(item.value)}`" :item="item" :active="isActive(item)">
-              <AccordionSection :section="item.content" />
+              <AccordionSection :section="item.content"/>
             </slot>
             <footer
               v-if="item.footer || $slots[`footer-${String(item.value)}`]"
@@ -171,7 +171,7 @@ function itemIconClass(item: AccordionItem): string {
               "
             >
               <slot :name="`footer-${String(item.value)}`" :item="item" :active="isActive(item)">
-                <AccordionSection :section="item.footer" />
+                <AccordionSection :section="item.footer"/>
               </slot>
             </footer>
           </div>

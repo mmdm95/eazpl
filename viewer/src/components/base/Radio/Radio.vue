@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
-import type { RadioOption, RadioProps, RadioValue } from './types'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
+import type {RadioOption, RadioProps, RadioValue} from './types'
 
-defineOptions({ name: 'BaseRadio' })
+defineOptions({name: 'BaseRadio'})
 
 const props = withDefaults(defineProps<RadioProps>(), {
   modelValue: undefined,

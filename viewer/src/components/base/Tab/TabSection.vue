@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
+import type {Component} from 'vue'
 
-import { resolveClasses } from '../shared'
-import type { TabSectionProps } from './types'
+import {resolveClasses} from '../shared'
+import type {TabSectionProps} from './types'
 
-defineOptions({ name: 'BaseTabSection' })
+defineOptions({name: 'BaseTabSection'})
 
 const props = withDefaults(defineProps<TabSectionProps>(), {
   section: undefined,
@@ -18,8 +18,8 @@ function isComponent(section: NonNullable<TabSectionProps['section']>): section 
 
 <template>
   <span :class="resolveClasses(props.classes, 'root', 'contents')">
-    <component :is="props.section" v-if="props.section && isComponent(props.section)" />
+    <component :is="props.section" v-if="props.section && isComponent(props.section)"/>
     <template v-else-if="props.section">{{ props.section }}</template>
-    <slot v-else />
+    <slot v-else/>
   </span>
 </template>

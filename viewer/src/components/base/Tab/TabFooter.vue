@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { resolveClasses } from '../shared'
+import {resolveClasses} from '../shared'
 import TabSection from './TabSection.vue'
-import type { TabFooterProps } from './types'
+import type {TabFooterProps} from './types'
 
-defineOptions({ name: 'BaseTabFooter' })
+defineOptions({name: 'BaseTabFooter'})
 
 const props = withDefaults(defineProps<TabFooterProps>(), {
   content: undefined,
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<TabFooterProps>(), {
     "
   >
     <slot>
-      <TabSection :section="props.content" />
+      <TabSection :section="props.content"/>
     </slot>
   </footer>
 </template>

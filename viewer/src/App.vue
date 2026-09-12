@@ -2,5 +2,5 @@
 import {ZplDesigner} from '@/components/zpl/designer'
 </script>
 <template>
-  <ZplDesigner />
+  <ZplDesigner/>
 </template>

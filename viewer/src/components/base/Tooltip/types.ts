@@ -1,4 +1,4 @@
-import type { BaseClasses } from '../shared'
+import type {BaseClasses} from '../shared'
 
 export type TooltipPlacement = 'top' | 'right' | 'bottom' | 'left'
 

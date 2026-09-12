@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { LoaderCircle } from '@lucide/vue'
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses, sizeClasses, variantClasses } from '../shared'
+import {LoaderCircle} from '@lucide/vue'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses, sizeClasses, variantClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { ButtonProps } from './types'
+import type {ButtonProps} from './types'
 
-defineOptions({ name: 'BaseButton' })
+defineOptions({name: 'BaseButton'})
 
 const props = withDefaults(defineProps<ButtonProps>(), {
   type: 'button',
@@ -73,7 +73,7 @@ function onClick(event: MouseEvent): void {
       v-if="$slots.default"
       :class="resolveClasses(props.classes, 'label', 'inline-flex items-center')"
     >
-      <slot />
+      <slot/>
     </span>
     <BaseLucideIcon
       v-if="activeIcon && props.iconPosition === 'right'"

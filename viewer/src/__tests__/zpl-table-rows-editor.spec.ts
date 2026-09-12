@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { mount } from '@vue/test-utils'
+import {describe, expect, it} from 'vitest'
+import {mount} from '@vue/test-utils'
 
 import ZplTableRowsEditor from '../components/zpl/properties/ZplTableRowsEditor.vue'
 
@@ -20,13 +20,13 @@ describe('ZplTableRowsEditor', () => {
     const withoutRow = rowEvents?.[rowEvents.length - 1]?.[0] as string
     expect(JSON.parse(withoutRow)).toEqual([['Header 1', 'Header 2']])
 
-    await wrapper.setProps({ modelValue: withoutRow })
+    await wrapper.setProps({modelValue: withoutRow})
     await wrapper.find('input[type="checkbox"]').setValue(false)
     const headerEvents = wrapper.emitted('update:modelValue')
     const withoutHeader = headerEvents?.[headerEvents.length - 1]?.[0] as string
     expect(JSON.parse(withoutHeader)).toEqual([])
 
-    await wrapper.setProps({ modelValue: withoutHeader })
+    await wrapper.setProps({modelValue: withoutHeader})
     await wrapper.find('input[type="checkbox"]').setValue(true)
     const restoreEvents = wrapper.emitted('update:modelValue')
     const restoredHeader = restoreEvents?.[restoreEvents.length - 1]?.[0] as string

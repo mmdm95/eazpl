@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon, BaseSize, BaseVariant } from '../shared'
+import type {BaseClasses, BaseIcon, BaseSize, BaseVariant} from '../shared'
 
 export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset'

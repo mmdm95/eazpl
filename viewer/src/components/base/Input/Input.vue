@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { LoaderCircle, X } from '@lucide/vue'
-import { computed, ref } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
+import {LoaderCircle, X} from '@lucide/vue'
+import {computed, ref} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { InputProps } from './types'
-import { t } from '@/i18n'
+import type {InputProps} from './types'
+import {t} from '@/i18n'
 
-defineOptions({ name: 'BaseInput' })
+defineOptions({name: 'BaseInput'})
 
 const props = withDefaults(defineProps<InputProps>(), {
   type: 'text',
@@ -185,7 +185,7 @@ defineExpose({
         @click.stop="clear"
       >
         <slot name="clearIcon">
-          <BaseLucideIcon :icon="props.clearIcon ?? X" :classes="{ root: clearIconClass }" />
+          <BaseLucideIcon :icon="props.clearIcon ?? X" :classes="{ root: clearIconClass }"/>
         </slot>
       </button>
 

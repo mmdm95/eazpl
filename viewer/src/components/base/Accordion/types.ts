@@ -1,6 +1,6 @@
-import type { Component } from 'vue'
+import type {Component} from 'vue'
 
-import type { BaseClasses, BaseIcon } from '../shared'
+import type {BaseClasses, BaseIcon} from '../shared'
 
 export type AccordionItemValue = string | number
 export type AccordionModelValue = AccordionItemValue | AccordionItemValue[] | null

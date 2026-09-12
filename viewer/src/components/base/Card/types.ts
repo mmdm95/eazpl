@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon } from '../shared'
+import type {BaseClasses, BaseIcon} from '../shared'
 
 export type CardVariant = 'plain' | 'outline' | 'elevated'
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg'

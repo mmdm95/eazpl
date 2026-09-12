@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from 'vue'
-import {BaseDropdown, BaseInput, BaseSwitch, BaseTextarea} from '@/components/base'
 import type {DropdownOption} from '@/components/base'
+import {BaseDropdown, BaseInput, BaseSwitch, BaseTextarea} from '@/components/base'
 import type {ZplAttributeEditorEmits, ZplAttributeEditorProps} from './types'
 
 const props = defineProps<ZplAttributeEditorProps>()

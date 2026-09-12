@@ -88,6 +88,7 @@
 [data-theme='light'] {
   color-scheme: light;
 }
+
 .dark,
 [data-theme='dark'] {
   color-scheme: dark;

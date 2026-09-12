@@ -1,4 +1,4 @@
-import type { ZplComponentDefinition, ZplComponentInstance } from '@/types/zpl'
+import type {ZplComponentDefinition, ZplComponentInstance} from '@/types/zpl'
 
 export interface ZplLayersPanelProps {
   components: ZplComponentInstance[]

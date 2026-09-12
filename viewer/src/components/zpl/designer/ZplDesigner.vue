@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { HelpCircle } from '@lucide/vue'
-import { ZplCanvas } from '@/components/zpl/canvas'
-import { ZplLayersPanel } from '@/components/zpl/layers'
-import { ZplComponentPalette } from '@/components/zpl/palette'
-import { ZplPropertiesPanel } from '@/components/zpl/properties'
-import { ZplToolbar } from '@/components/zpl/toolbar'
-import { BaseAlert, BaseModal, BaseTab, BaseTooltip } from '@/components/base'
-import { useZplComponents } from '@/composables/zpl/useZplComponents'
-import { useZplDesigner } from '@/composables/zpl/useZplDesigner'
-import { generateZpl } from '@/services/zpl'
-import type { ZplComponentDefinition } from '@/types/zpl'
-import type { ZplDesignerNotification } from './types'
+import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
+import {HelpCircle} from '@lucide/vue'
+import {ZplCanvas} from '@/components/zpl/canvas'
+import {ZplLayersPanel} from '@/components/zpl/layers'
+import {ZplComponentPalette} from '@/components/zpl/palette'
+import {ZplPropertiesPanel} from '@/components/zpl/properties'
+import {ZplToolbar} from '@/components/zpl/toolbar'
+import {BaseAlert, BaseModal, BaseTab, BaseTooltip} from '@/components/base'
+import {useZplComponents} from '@/composables/zpl/useZplComponents'
+import {useZplDesigner} from '@/composables/zpl/useZplDesigner'
+import {generateZpl} from '@/services/zpl'
+import type {ZplComponentDefinition} from '@/types/zpl'
+import type {ZplDesignerNotification} from './types'
 
 const componentService = useZplComponents()
 const designer = useZplDesigner()
@@ -39,7 +39,7 @@ const selectedDefinition = computed(
 )
 
 function showNotification(type: ZplDesignerNotification['type'], message: string): void {
-  notification.value = { type, message }
+  notification.value = {type, message}
   window.setTimeout(() => {
     if (notification.value?.message === message) notification.value = null
   }, 4000)
@@ -82,7 +82,7 @@ async function copyOutput(): Promise<void> {
 
 function downloadOutput(): void {
   if (!generatedZpl.value) return
-  const blob = new Blob([generatedZpl.value], { type: 'text/plain' })
+  const blob = new Blob([generatedZpl.value], {type: 'text/plain'})
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
@@ -233,7 +233,7 @@ onBeforeUnmount(() => {
             aria-label="ZPL designer guide"
             @click="guideVisible = true"
           >
-            <HelpCircle class="h-4 w-4" />
+            <HelpCircle class="h-4 w-4"/>
           </button>
         </BaseTooltip>
       </section>
@@ -276,7 +276,7 @@ onBeforeUnmount(() => {
               />
               <pre
                 class="min-h-40 flex-1 overflow-auto rounded-control border border-border bg-surface-muted p-3 text-xs text-content"
-                >{{ generatedZpl || 'Generated ZPL will appear here.' }}</pre>
+              >{{ generatedZpl || 'Generated ZPL will appear here.' }}</pre>
             </section>
           </template>
         </BaseTab>

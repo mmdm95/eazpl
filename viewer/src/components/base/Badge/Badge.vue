@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { cn } from '@/utils'
+import {computed} from 'vue'
+import {cn} from '@/utils'
 
-import { resolveClasses } from '../shared'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { BadgeProps } from './types'
+import type {BadgeProps} from './types'
 
-defineOptions({ name: 'BaseBadge' })
+defineOptions({name: 'BaseBadge'})
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   variant: 'primary',
@@ -69,7 +69,7 @@ const rootClass = computed(() =>
       v-if="$slots.default"
       :class="resolveClasses(props.classes, 'label', 'inline-flex items-center')"
     >
-      <slot />
+      <slot/>
     </span>
     <BaseLucideIcon
       v-if="props.icon && props.iconPosition === 'right'"

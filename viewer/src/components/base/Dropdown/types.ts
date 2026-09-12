@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon, BaseSize, BaseVariant } from '../shared'
+import type {BaseClasses, BaseIcon, BaseSize, BaseVariant} from '../shared'
 
 export type DropdownValue = string | number
 export type DropdownPlacement = 'bottom-start' | 'bottom-end' | 'top-start' | 'top-end'

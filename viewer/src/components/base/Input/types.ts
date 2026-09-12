@@ -1,5 +1,5 @@
-import type { InputHTMLAttributes } from 'vue'
-import type { BaseClasses, BaseIcon, BaseSize } from '../shared'
+import type {InputHTMLAttributes} from 'vue'
+import type {BaseClasses, BaseIcon, BaseSize} from '../shared'
 
 export type InputType = NonNullable<InputHTMLAttributes['type']>
 export type InputVariant = 'outline' | 'filled'

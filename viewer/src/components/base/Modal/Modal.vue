@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { X } from '@lucide/vue'
-import { computed, onBeforeUnmount, watch } from 'vue'
-import { cn } from '@/utils'
+import {X} from '@lucide/vue'
+import {computed, onBeforeUnmount, watch} from 'vue'
+import {cn} from '@/utils'
 import {
   overlayContainerClass,
+  type OverlayDragOffset,
   overlayPanelEnterClass,
   resolveClasses,
-  type OverlayDragOffset,
 } from '../shared'
-import { useOverlayDrag } from '../useOverlayDrag'
+import {useOverlayDrag} from '../useOverlayDrag'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { ModalProps } from './types'
-import { t } from '@/i18n'
+import type {ModalProps} from './types'
+import {t} from '@/i18n'
 
-defineOptions({ name: 'BaseModal' })
+defineOptions({name: 'BaseModal'})
 
 const props = withDefaults(defineProps<ModalProps>(), {
   modelValue: false,
@@ -92,7 +92,7 @@ watch(
       if (props.lockScroll) document.body.style.overflow = previousOverflow
     }
   },
-  { immediate: true },
+  {immediate: true},
 )
 
 onBeforeUnmount(() => {
@@ -250,7 +250,7 @@ function onBackdropClick(): void {
                 )
               "
             >
-              <slot :close="close" />
+              <slot :close="close"/>
             </div>
 
             <footer
@@ -263,7 +263,7 @@ function onBackdropClick(): void {
                 )
               "
             >
-              <slot name="footer" :close="close" />
+              <slot name="footer" :close="close"/>
             </footer>
           </div>
         </Transition>

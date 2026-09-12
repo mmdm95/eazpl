@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import {ref, watch} from 'vue'
 
 const props = defineProps<{
   columns: number
@@ -76,7 +76,7 @@ function updateDataCell(rowIndex: number, columnIndex: number, value: string): v
 }
 
 function addRow(): void {
-  dataRows.value = [...dataRows.value, Array.from({ length: props.columns }, () => '')]
+  dataRows.value = [...dataRows.value, Array.from({length: props.columns}, () => '')]
   emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
 }
 
@@ -85,7 +85,7 @@ function removeRow(rowIndex: number): void {
   emitRows(normalizeRows(hasHeader.value ? [headerRow.value, ...dataRows.value] : dataRows.value))
 }
 
-watch(() => props.modelValue, parseRows, { immediate: true })
+watch(() => props.modelValue, parseRows, {immediate: true})
 
 watch(
   () => props.columns,

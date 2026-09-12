@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { CircleAlert, CircleCheck, Info, X } from '@lucide/vue'
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { t } from '@/i18n'
+import {CircleAlert, CircleCheck, Info, X} from '@lucide/vue'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {t} from '@/i18n'
 
-import { resolveClasses } from '../shared'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { AlertProps } from './types'
+import type {AlertProps} from './types'
 
-defineOptions({ name: 'BaseAlert' })
+defineOptions({name: 'BaseAlert'})
 
 const props = withDefaults(defineProps<AlertProps>(), {
   variant: 'primary',
@@ -116,7 +116,7 @@ const rootClass = computed(() =>
           )
         "
       >
-        <slot />
+        <slot/>
       </div>
     </div>
 

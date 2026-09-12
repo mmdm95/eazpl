@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { X } from '@lucide/vue'
-import { computed, onBeforeUnmount, watch, type CSSProperties } from 'vue'
-import { cn } from '@/utils'
-import { overlayContainerClass, overlayPanelEnterClass, resolveClasses } from '../shared'
-import { useDrawerDismissDrag, type DrawerCloseEdge } from '../useDrawerDismissDrag'
+import {X} from '@lucide/vue'
+import {computed, type CSSProperties, onBeforeUnmount, watch} from 'vue'
+import {cn} from '@/utils'
+import {overlayContainerClass, overlayPanelEnterClass, resolveClasses} from '../shared'
+import {type DrawerCloseEdge, useDrawerDismissDrag} from '../useDrawerDismissDrag'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { DrawerProps } from './types'
-import { t } from '@/i18n'
+import type {DrawerProps} from './types'
+import {t} from '@/i18n'
 
-defineOptions({ name: 'BaseDrawer' })
+defineOptions({name: 'BaseDrawer'})
 
 const props = withDefaults(defineProps<DrawerProps>(), {
   modelValue: false,
@@ -42,10 +42,10 @@ const emit = defineEmits<{
 }>()
 
 const sizeMap = {
-  sm: { width: '18rem', height: '30vh' },
-  md: { width: '22rem', height: '45vh' },
-  lg: { width: '28rem', height: '65vh' },
-  full: { width: '100vw', height: '100vh' },
+  sm: {width: '18rem', height: '30vh'},
+  md: {width: '22rem', height: '45vh'},
+  lg: {width: '28rem', height: '65vh'},
+  full: {width: '100vw', height: '100vh'},
 }
 let previousOverflow = ''
 let hasBeenVisible = false
@@ -113,12 +113,12 @@ const dragStyle = computed<CSSProperties>(() => {
   const distance = dragDistance.value
   const offset =
     closeEdge.value === 'right'
-      ? { x: distance, y: 0 }
+      ? {x: distance, y: 0}
       : closeEdge.value === 'left'
-        ? { x: -distance, y: 0 }
-        : { x: 0, y: closeEdge.value === 'bottom' ? distance : -distance }
+        ? {x: -distance, y: 0}
+        : {x: 0, y: closeEdge.value === 'bottom' ? distance : -distance}
 
-  return { transform: `translate3d(${offset.x}px, ${offset.y}px, 0)` }
+  return {transform: `translate3d(${offset.x}px, ${offset.y}px, 0)`}
 })
 
 function close(): void {
@@ -157,7 +157,7 @@ watch(
       if (props.lockScroll) document.body.style.overflow = previousOverflow
     }
   },
-  { immediate: true },
+  {immediate: true},
 )
 
 onBeforeUnmount(() => {
@@ -337,7 +337,7 @@ function onBackdropClick(): void {
                 )
               "
             >
-              <slot :close="close" />
+              <slot :close="close"/>
             </div>
 
             <footer
@@ -350,7 +350,7 @@ function onBackdropClick(): void {
                 )
               "
             >
-              <slot name="footer" :close="close" />
+              <slot name="footer" :close="close"/>
             </footer>
           </section>
         </Transition>

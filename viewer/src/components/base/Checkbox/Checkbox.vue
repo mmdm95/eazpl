@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { Check, Minus } from '@lucide/vue'
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
+import {Check, Minus} from '@lucide/vue'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { CheckboxModelValue, CheckboxProps } from './types'
+import type {CheckboxModelValue, CheckboxProps} from './types'
 
-defineOptions({ name: 'BaseCheckbox' })
+defineOptions({name: 'BaseCheckbox'})
 
 const props = withDefaults(defineProps<CheckboxProps>(), {
   modelValue: false,
@@ -74,7 +74,8 @@ function onChange(event: Event): void {
         )
       "
     >
-      <span :class="resolveClasses(props.classes, 'inputWrapper', 'relative inline-flex mt-field-label-gap')">
+      <span
+        :class="resolveClasses(props.classes, 'inputWrapper', 'relative inline-flex mt-field-label-gap')">
         <input
           :id="checkboxId"
           type="checkbox"

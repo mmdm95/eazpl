@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { cn } from '@/utils'
+import {computed} from 'vue'
+import {cn} from '@/utils'
 
-import { resolveClasses } from '../shared'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { CardProps } from './types'
+import type {CardProps} from './types'
 
-defineOptions({ name: 'BaseCard' })
+defineOptions({name: 'BaseCard'})
 
 const props = withDefaults(defineProps<CardProps>(), {
   variant: 'outline',
@@ -107,7 +107,7 @@ const rootClass = computed(() =>
     <div
       :class="resolveClasses(props.classes, 'content', 'flex-1 text-control-sm text-content-muted')"
     >
-      <slot />
+      <slot/>
     </div>
 
     <footer
@@ -120,7 +120,7 @@ const rootClass = computed(() =>
         )
       "
     >
-      <slot name="footer" />
+      <slot name="footer"/>
     </footer>
   </div>
 </template>

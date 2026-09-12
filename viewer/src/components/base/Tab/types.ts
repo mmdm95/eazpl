@@ -1,6 +1,6 @@
-import type { Component } from 'vue'
+import type {Component} from 'vue'
 
-import type { BaseClasses, BaseIcon } from '../shared'
+import type {BaseClasses, BaseIcon} from '../shared'
 
 export type TabItemValue = string | number
 export type TabOrientation = 'horizontal' | 'vertical'

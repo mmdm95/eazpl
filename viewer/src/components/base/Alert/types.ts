@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon, BaseVariant } from '../shared'
+import type {BaseClasses, BaseIcon, BaseVariant} from '../shared'
 
 export interface AlertProps {
   variant?: BaseVariant

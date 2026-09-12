@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, Lock, LockOpen, Trash2 } from '@lucide/vue'
-import type { ZplLayersPanelEmits, ZplLayersPanelProps } from './types'
-import { BaseTooltip } from '@/components/base'
+import {computed} from 'vue'
+import {ArrowDown, ArrowUp, Copy, Eye, EyeOff, Lock, LockOpen, Trash2} from '@lucide/vue'
+import type {ZplLayersPanelEmits, ZplLayersPanelProps} from './types'
+import {BaseTooltip} from '@/components/base'
 
 const props = defineProps<ZplLayersPanelProps>()
 const emit = defineEmits<ZplLayersPanelEmits>()
@@ -56,7 +56,7 @@ const actionClass =
               :aria-label="`${component.visible === false ? 'Show' : 'Hide'} layer`"
               @click.stop="emit('toggle-visibility', component.id)"
             >
-              <component :is="component.visible === false ? EyeOff : Eye" class="h-3.5 w-3.5" />
+              <component :is="component.visible === false ? EyeOff : Eye" class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
           <BaseTooltip :content="`${component.locked ? 'Unlock' : 'Lock'} layer`">
@@ -66,7 +66,7 @@ const actionClass =
               :aria-label="`${component.locked ? 'Unlock' : 'Lock'} layer`"
               @click.stop="emit('toggle-lock', component.id)"
             >
-              <component :is="component.locked ? Lock : LockOpen" class="h-3.5 w-3.5" />
+              <component :is="component.locked ? Lock : LockOpen" class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
           <BaseTooltip content="Move layer up">
@@ -76,7 +76,7 @@ const actionClass =
               aria-label="Move layer up"
               @click.stop="emit('move', component.id, 1)"
             >
-              <ArrowUp class="h-3.5 w-3.5" />
+              <ArrowUp class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
           <BaseTooltip content="Move layer down">
@@ -86,7 +86,7 @@ const actionClass =
               aria-label="Move layer down"
               @click.stop="emit('move', component.id, -1)"
             >
-              <ArrowDown class="h-3.5 w-3.5" />
+              <ArrowDown class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
           <BaseTooltip content="Duplicate layer">
@@ -96,7 +96,7 @@ const actionClass =
               aria-label="Duplicate layer"
               @click.stop="emit('duplicate', component.id)"
             >
-              <Copy class="h-3.5 w-3.5" />
+              <Copy class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
           <BaseTooltip content="Delete layer">
@@ -106,7 +106,7 @@ const actionClass =
               aria-label="Delete layer"
               @click.stop="emit('remove', component.id)"
             >
-              <Trash2 class="h-3.5 w-3.5" />
+              <Trash2 class="h-3.5 w-3.5"/>
             </button>
           </BaseTooltip>
         </div>

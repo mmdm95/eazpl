@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { BaseCard, BaseInput } from '@/components/base'
-import { ZplAttributeEditor, ZplTableRowsEditor } from './'
-import type { ZplPropertiesPanelEmits, ZplPropertiesPanelProps } from './types'
+import {computed} from 'vue'
+import {BaseCard, BaseInput} from '@/components/base'
+import {ZplAttributeEditor, ZplTableRowsEditor} from './'
+import type {ZplPropertiesPanelEmits, ZplPropertiesPanelProps} from './types'
 
 const props = defineProps<ZplPropertiesPanelProps>()
 const emit = defineEmits<ZplPropertiesPanelEmits>()

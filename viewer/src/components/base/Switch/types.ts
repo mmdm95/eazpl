@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon, BaseSize } from '../shared'
+import type {BaseClasses, BaseIcon, BaseSize} from '../shared'
 
 export type SwitchSize = Extract<BaseSize, 'sm' | 'md' | 'lg'>
 

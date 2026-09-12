@@ -1,8 +1,8 @@
-import { inject, provide, type ComputedRef, type CSSProperties, type InjectionKey } from 'vue'
-import { cn } from '@/utils'
+import {type ComputedRef, type CSSProperties, inject, type InjectionKey, provide} from 'vue'
+import {cn} from '@/utils'
 
-import type { BaseClasses } from '../shared'
-import type { TabClasses, TabItem, TabItemValue, TabOrientation, TabVariant } from './types'
+import type {BaseClasses} from '../shared'
+import type {TabClasses, TabItem, TabItemValue, TabOrientation, TabVariant} from './types'
 
 export interface BaseTabContext {
   activeValue: ComputedRef<TabItemValue | undefined>

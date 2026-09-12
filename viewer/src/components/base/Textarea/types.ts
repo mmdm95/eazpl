@@ -1,4 +1,4 @@
-import type { BaseClasses } from '../shared'
+import type {BaseClasses} from '../shared'
 
 export type TextareaVariant = 'outline' | 'filled'
 export type TextareaResize = 'none' | 'horizontal' | 'vertical' | 'both'

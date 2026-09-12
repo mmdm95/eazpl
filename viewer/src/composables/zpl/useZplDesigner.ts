@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue'
-import { useZplHistory } from './useZplHistory'
-import type { ZplComponentDefinition, ZplComponentInstance, ZplDesignerState } from '@/types/zpl'
+import {computed, ref} from 'vue'
+import {useZplHistory} from './useZplHistory'
+import type {ZplComponentDefinition, ZplComponentInstance, ZplDesignerState} from '@/types/zpl'
 
 function createId(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
@@ -9,12 +9,12 @@ function createId(): string {
 
 function defaultState(): ZplDesignerState {
   return {
-    label: { width: 812, height: 500, dpi: 203, orientation: 'portrait' },
+    label: {width: 812, height: 500, dpi: 203, orientation: 'portrait'},
     components: [],
     selectedComponentId: null,
     activeTool: 'selection',
     zoom: 1,
-    grid: { enabled: true, size: 10, snap: true },
+    grid: {enabled: true, size: 10, snap: true},
   }
 }
 

@@ -12,10 +12,10 @@ import {
   ZoomIn,
   ZoomOut,
 } from '@lucide/vue'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { BaseButton, BaseDropdown, BaseInput, BaseTooltip } from '@/components/base'
-import type { DropdownOption } from '@/components/base'
-import type { ZplToolbarEmits, ZplToolbarProps } from './types'
+import {onBeforeUnmount, onMounted, ref} from 'vue'
+import type {DropdownOption} from '@/components/base'
+import {BaseButton, BaseDropdown, BaseInput, BaseTooltip} from '@/components/base'
+import type {ZplToolbarEmits, ZplToolbarProps} from './types'
 
 defineProps<ZplToolbarProps>()
 const emit = defineEmits<ZplToolbarEmits>()
@@ -24,13 +24,13 @@ const settingsOpen = ref(false)
 const settingsButton = ref<HTMLElement | null>(null)
 
 const dpiOptions: DropdownOption[] = [
-  { value: 203, label: '203 DPI' },
-  { value: 300, label: '300 DPI' },
-  { value: 600, label: '600 DPI' },
+  {value: 203, label: '203 DPI'},
+  {value: 300, label: '300 DPI'},
+  {value: 600, label: '600 DPI'},
 ]
 const orientationOptions: DropdownOption[] = [
-  { value: 'portrait', label: 'Portrait' },
-  { value: 'landscape', label: 'Landscape' },
+  {value: 'portrait', label: 'Portrait'},
+  {value: 'landscape', label: 'Landscape'},
 ]
 
 function onDocumentPointerDown(event: PointerEvent): void {

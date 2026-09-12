@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { resolveClasses } from '../shared'
-import type { IconProps } from './types'
+import {resolveClasses} from '../shared'
+import type {IconProps} from './types'
 
-defineOptions({ name: 'BaseLucideIcon' })
+defineOptions({name: 'BaseLucideIcon'})
 
 const props = withDefaults(defineProps<IconProps>(), {
   size: 16,

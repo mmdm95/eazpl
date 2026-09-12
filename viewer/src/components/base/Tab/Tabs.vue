@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { cn } from '@/utils'
+import {computed, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
+import {cn} from '@/utils'
 
-import { mergeTabClasses, useBaseTabContext } from './context'
-import type { TabsProps } from './types'
+import {mergeTabClasses, useBaseTabContext} from './context'
+import type {TabsProps} from './types'
 
-defineOptions({ name: 'BaseTabs' })
+defineOptions({name: 'BaseTabs'})
 
 const props = withDefaults(defineProps<TabsProps>(), {
   classes: undefined,
@@ -83,7 +83,7 @@ onBeforeUnmount(() => {
     :aria-orientation="context.orientation.value"
     @keydown="onKeydown"
   >
-    <span :class="indicatorClass" :style="context.indicatorStyle.value" aria-hidden="true" />
-    <slot />
+    <span :class="indicatorClass" :style="context.indicatorStyle.value" aria-hidden="true"/>
+    <slot/>
   </div>
 </template>

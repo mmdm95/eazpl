@@ -1,4 +1,4 @@
-import { computed, ref, watch, type ComputedRef, type Ref } from 'vue'
+import {computed, type ComputedRef, ref, type Ref, watch} from 'vue'
 
 export type Locale = 'en' | 'fa'
 
@@ -218,7 +218,7 @@ export function useI18n() {
         document.documentElement.dir = dir
       }
     },
-    { immediate: true },
+    {immediate: true},
   )
-  return { locale, direction, t, setLocale }
+  return {locale, direction, t, setLocale}
 }

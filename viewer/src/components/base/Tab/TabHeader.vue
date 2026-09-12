@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { onBeforeUnmount, watch, type ComponentPublicInstance } from 'vue'
-import { cn } from '@/utils'
+import {type ComponentPublicInstance, onBeforeUnmount, watch} from 'vue'
+import {cn} from '@/utils'
 
 import BaseLucideIcon from '../Icon/Icon.vue'
-import { mergeTabClasses, useBaseTabContext } from './context'
+import {mergeTabClasses, useBaseTabContext} from './context'
 import TabSection from './TabSection.vue'
-import type { TabHeaderProps, TabItem } from './types'
+import type {TabHeaderProps, TabItem} from './types'
 
-defineOptions({ name: 'BaseTabHeader' })
+defineOptions({name: 'BaseTabHeader'})
 
 const props = withDefaults(defineProps<TabHeaderProps>(), {
   label: undefined,
@@ -95,7 +95,7 @@ watch(
   () => {
     context.registerTab(headerItem())
   },
-  { immediate: true },
+  {immediate: true},
 )
 
 onBeforeUnmount(() => {
@@ -118,9 +118,9 @@ onBeforeUnmount(() => {
     @click="context.select(props.value)"
   >
     <slot :active="active()" :disabled="props.disabled">
-      <BaseLucideIcon v-if="props.icon" :icon="props.icon" :classes="{ root: iconClass() }" />
+      <BaseLucideIcon v-if="props.icon" :icon="props.icon" :classes="{ root: iconClass() }"/>
       <span v-if="props.label" :class="labelClass()">
-        <TabSection :section="props.label" />
+        <TabSection :section="props.label"/>
       </span>
     </slot>
   </button>

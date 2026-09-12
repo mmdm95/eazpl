@@ -1,4 +1,8 @@
-import type {ZplAttributeDefinition, ZplComponentDefinition, ZplComponentInstance} from '@/types/zpl'
+import type {
+  ZplAttributeDefinition,
+  ZplComponentDefinition,
+  ZplComponentInstance
+} from '@/types/zpl'
 
 export interface ZplAttributeEditorProps {
   definition: ZplAttributeDefinition

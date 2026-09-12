@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import {describe, expect, it, vi} from 'vitest'
 
-import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import {mount} from '@vue/test-utils'
+import {nextTick} from 'vue'
 
-import { BaseTooltip } from '../components/base'
+import {BaseTooltip} from '../components/base'
 
 function rect(values: Partial<DOMRect>): DOMRect {
   return {
@@ -25,7 +25,7 @@ describe('BaseTooltip', () => {
     vi.useFakeTimers()
     const wrapper = mount(BaseTooltip, {
       attachTo: document.body,
-      props: { delay: 0 },
+      props: {delay: 0},
       slots: {
         default: '<button type="button">Trigger</button>',
         content: '<span>Slotted tooltip</span>',
@@ -33,7 +33,7 @@ describe('BaseTooltip', () => {
     })
     const trigger = wrapper.find('button').element
     trigger.getBoundingClientRect = () =>
-      rect({ top: 400, bottom: 440, left: 500, right: 600, width: 100, height: 40 })
+      rect({top: 400, bottom: 440, left: 500, right: 600, width: 100, height: 40})
 
     await wrapper.trigger('pointerenter')
     await vi.advanceTimersByTimeAsync(0)
@@ -56,12 +56,12 @@ describe('BaseTooltip', () => {
     vi.useFakeTimers()
     const wrapper = mount(BaseTooltip, {
       attachTo: document.body,
-      props: { content: 'Viewport-aware tooltip', placement: 'right', delay: 0 },
-      slots: { default: '<button type="button">Trigger</button>' },
+      props: {content: 'Viewport-aware tooltip', placement: 'right', delay: 0},
+      slots: {default: '<button type="button">Trigger</button>'},
     })
     const trigger = wrapper.find('button').element
     trigger.getBoundingClientRect = () =>
-      rect({ top: 100, bottom: 140, left: 1000, right: 1100, width: 100, height: 40 })
+      rect({top: 100, bottom: 140, left: 1000, right: 1100, width: 100, height: 40})
 
     await wrapper.trigger('pointerenter')
     await vi.advanceTimersByTimeAsync(0)
@@ -70,7 +70,7 @@ describe('BaseTooltip', () => {
     const tooltip = document.body.querySelector<HTMLElement>('[role="tooltip"]')
     expect(tooltip).not.toBeNull()
     if (!tooltip) return
-    tooltip.getBoundingClientRect = () => rect({ width: 200, height: 40 })
+    tooltip.getBoundingClientRect = () => rect({width: 200, height: 40})
     window.dispatchEvent(new Event('resize'))
     await nextTick()
 
@@ -93,15 +93,15 @@ describe('BaseTooltip', () => {
     vi.useFakeTimers()
     const computedStyle = vi
       .spyOn(window, 'getComputedStyle')
-      .mockReturnValue({ direction: 'rtl' } as CSSStyleDeclaration)
+      .mockReturnValue({direction: 'rtl'} as CSSStyleDeclaration)
     const wrapper = mount(BaseTooltip, {
       attachTo: document.body,
-      props: { content: 'RTL tooltip', placement: 'right', delay: 0 },
-      slots: { default: '<button type="button">Trigger</button>' },
+      props: {content: 'RTL tooltip', placement: 'right', delay: 0},
+      slots: {default: '<button type="button">Trigger</button>'},
     })
     const trigger = wrapper.find('button').element
     trigger.getBoundingClientRect = () =>
-      rect({ top: 400, bottom: 440, left: 500, right: 600, width: 100, height: 40 })
+      rect({top: 400, bottom: 440, left: 500, right: 600, width: 100, height: 40})
 
     await wrapper.trigger('pointerenter')
     await vi.advanceTimersByTimeAsync(0)

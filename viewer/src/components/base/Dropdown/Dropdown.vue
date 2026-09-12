@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Check, ChevronDown, LoaderCircle, X } from '@lucide/vue'
-import { computed, nextTick, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses, sizeClasses, variantClasses } from '../shared'
+import {Check, ChevronDown, LoaderCircle, X} from '@lucide/vue'
+import {computed, type CSSProperties, nextTick, onBeforeUnmount, ref, watch} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses, sizeClasses, variantClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { DropdownOption, DropdownProps, DropdownValue } from './types'
-import { t } from '@/i18n'
+import type {DropdownOption, DropdownProps, DropdownValue} from './types'
+import {t} from '@/i18n'
 
-defineOptions({ name: 'BaseDropdown' })
+defineOptions({name: 'BaseDropdown'})
 
 const props = withDefaults(defineProps<DropdownProps>(), {
   modelValue: undefined,
@@ -71,9 +71,9 @@ watch(isOpen, (open) => {
     emit('open')
     document.addEventListener('mousedown', onDocumentClick)
     if (typeof window !== 'undefined') {
-      menuStyle.value = { ...menuStyle.value, visibility: 'hidden' }
-      window.addEventListener('resize', updateMenuPosition, { passive: true })
-      window.addEventListener('scroll', updateMenuPosition, { passive: true, capture: true })
+      menuStyle.value = {...menuStyle.value, visibility: 'hidden'}
+      window.addEventListener('resize', updateMenuPosition, {passive: true})
+      window.addEventListener('scroll', updateMenuPosition, {passive: true, capture: true})
       void nextTick(updateMenuPosition)
     }
   } else {
@@ -98,7 +98,7 @@ function open(): void {
   if (isDisabled.value || isOpen.value) return
   activeIndex.value = enabledOptions.value.findIndex((option) => option.value === props.modelValue)
   updateMenuPosition()
-  menuStyle.value = { ...menuStyle.value, visibility: 'hidden' }
+  menuStyle.value = {...menuStyle.value, visibility: 'hidden'}
   isOpen.value = true
 }
 

@@ -1,6 +1,6 @@
-import { computed, onBeforeUnmount, ref, type Ref } from 'vue'
+import {computed, onBeforeUnmount, ref, type Ref} from 'vue'
 
-import type { OverlayPosition } from './shared'
+import type {OverlayPosition} from './shared'
 
 export type DrawerCloseEdge = 'top' | 'right' | 'bottom' | 'left'
 
@@ -23,19 +23,19 @@ export function getDrawerCloseEdge(position: OverlayPosition): DrawerCloseEdge {
 }
 
 export function useDrawerDismissDrag({
-  enabled,
-  position,
-  threshold,
-  onDragStart,
-  onDrag,
-  onDragEnd,
-  onClose,
-}: UseDrawerDismissDragOptions) {
+                                       enabled,
+                                       position,
+                                       threshold,
+                                       onDragStart,
+                                       onDrag,
+                                       onDragEnd,
+                                       onClose,
+                                     }: UseDrawerDismissDragOptions) {
   const isDragging = ref(false)
   const dragProgress = ref(0)
   const dragDistance = ref(0)
   const closeEdge = computed(() => getDrawerCloseEdge(position.value))
-  let startClient = { x: 0, y: 0 }
+  let startClient = {x: 0, y: 0}
   let activeElement: HTMLElement | null = null
   let pointerId: number | null = null
   let suppressClick = false
@@ -102,7 +102,7 @@ export function useDrawerDismissDrag({
     }
 
     event.preventDefault()
-    startClient = { x: event.clientX, y: event.clientY }
+    startClient = {x: event.clientX, y: event.clientY}
     activeElement = element
     pointerId = event.pointerId
     isDragging.value = true

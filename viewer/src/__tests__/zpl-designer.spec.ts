@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import {describe, expect, it} from 'vitest'
 
-import { useZplDesigner } from '../composables/zpl/useZplDesigner'
-import type { ZplComponentDefinition } from '../types/zpl'
+import {useZplDesigner} from '../composables/zpl/useZplDesigner'
+import type {ZplComponentDefinition} from '../types/zpl'
 
 const definition: ZplComponentDefinition = {
   type: 'text',

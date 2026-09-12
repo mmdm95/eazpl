@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon, OverlayPosition } from '../shared'
+import type {BaseClasses, BaseIcon, OverlayPosition} from '../shared'
 
 export type DrawerSize = 'sm' | 'md' | 'lg' | 'full'
 

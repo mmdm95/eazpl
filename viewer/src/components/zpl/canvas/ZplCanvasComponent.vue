@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { RotateCw } from '@lucide/vue'
-import { computed, ref } from 'vue'
-import { BaseLucideIcon } from '@/components/base'
-import type { CSSProperties } from 'vue'
-import type { ZplCanvasComponentEmits, ZplCanvasComponentProps } from './types'
+import {RotateCw} from '@lucide/vue'
+import type {CSSProperties} from 'vue'
+import {computed, ref} from 'vue'
+import {BaseLucideIcon} from '@/components/base'
+import type {ZplCanvasComponentEmits, ZplCanvasComponentProps} from './types'
 
 const props = defineProps<ZplCanvasComponentProps>()
 const emit = defineEmits<ZplCanvasComponentEmits>()
 const root = ref<HTMLElement | null>(null)
 
 type DragMode = 'move' | 'resize' | 'rotate'
+
 interface DragState {
   mode: DragMode
   pointerId: number
@@ -142,7 +143,8 @@ function endDrag(event: PointerEvent): void {
           definition.preview === 'shape' &&
           (instance.type === 'circle' || instance.type === 'ellipse')
         "
-        class="h-full w-full rounded-full border-2 border-content"
+        class="h-full w-full border-2 border-content"
+        :class="instance.type === 'circle' ? 'rounded-full' : 'rounded-[50%]'"
       />
       <div
         v-else-if="definition.preview === 'shape' && instance.type === 'vertical-line'"
@@ -165,7 +167,7 @@ function endDrag(event: PointerEvent): void {
           class="min-h-0 bg-surface"
         />
       </div>
-      <div v-else class="h-[70%] w-[70%] rounded-control bg-content/90" />
+      <div v-else class="h-[70%] w-[70%] rounded-control bg-content/90"/>
     </div>
 
     <span
@@ -175,7 +177,7 @@ function endDrag(event: PointerEvent): void {
       aria-hidden="true"
       @pointerdown="startDrag($event, 'rotate')"
     >
-      <BaseLucideIcon :icon="RotateCw" class="h-3 w-3" />
+      <BaseLucideIcon :icon="RotateCw" class="h-3 w-3"/>
     </span>
     <span
       v-if="selected && !locked && definition.resizable !== false"

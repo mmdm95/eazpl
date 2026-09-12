@@ -9,13 +9,13 @@ export const baseRadiusTokens = {
 } as const
 
 export const baseSpacingTokens = {
-  icon: { xs: '0.75rem', sm: '1rem', md: '1.25rem' },
-  overlay: { padding: '1rem', gap: '0.5rem' },
-  menu: { padding: '0.25rem', maxHeight: '15rem' },
-  fieldAction: { offset: '0.5rem', padding: '0.25rem' },
+  icon: {xs: '0.75rem', sm: '1rem', md: '1.25rem'},
+  overlay: {padding: '1rem', gap: '0.5rem'},
+  menu: {padding: '0.25rem', maxHeight: '15rem'},
+  fieldAction: {offset: '0.5rem', padding: '0.25rem'},
   fieldLabelGap: '0.25rem',
   dropdownClearSpace: '3rem',
-  dragHandle: { area: '1.5rem', length: '5rem', thickness: '0.375rem' },
+  dragHandle: {area: '1.5rem', length: '5rem', thickness: '0.375rem'},
 } as const
 
 export const baseLayoutTokens = {
@@ -25,29 +25,29 @@ export const baseLayoutTokens = {
 } as const
 export const baseTypographyTokens = {
   caption: '0.75rem',
-  control: { sm: '0.875rem', md: '0.875rem', lg: '1rem' },
+  control: {sm: '0.875rem', md: '0.875rem', lg: '1rem'},
   title: '1rem',
 } as const
-export const baseMotionTokens = { lift: '0.125rem', press: 0.98 } as const
+export const baseMotionTokens = {lift: '0.125rem', press: 0.98} as const
 export const baseSizeTokens = {
   control: {
-    height: { sm: '2rem', md: '2.5rem', lg: '3rem' },
+    height: {sm: '2rem', md: '2.5rem', lg: '3rem'},
     text: baseTypographyTokens.control,
-    icon: { sm: '1rem', md: '1.25rem' },
+    icon: {sm: '1rem', md: '1.25rem'},
   },
   switch: {
-    height: { sm: '1.25rem', md: '1.5rem', lg: '1.75rem' },
-    width: { sm: '2.25rem', md: '2.75rem', lg: '3rem' },
-    knob: { sm: '0.875rem', md: '1.125rem', lg: '1.25rem' },
+    height: {sm: '1.25rem', md: '1.5rem', lg: '1.75rem'},
+    width: {sm: '2.25rem', md: '2.75rem', lg: '3rem'},
+    knob: {sm: '0.875rem', md: '1.125rem', lg: '1.25rem'},
   },
 } as const
 export const basePaddingTokens = {
   control: {
-    x: { sm: '0.75rem', md: '1rem', lg: '1.5rem' },
-    y: { sm: '0.5rem', md: '1rem', lg: '1.5rem' },
-    gap: { sm: '0.375rem', md: '0.5rem', lg: '0.625rem' },
+    x: {sm: '0.75rem', md: '1rem', lg: '1.5rem'},
+    y: {sm: '0.5rem', md: '1rem', lg: '1.5rem'},
+    gap: {sm: '0.375rem', md: '0.5rem', lg: '0.625rem'},
   },
-  content: { sm: '0.75rem', md: '1.25rem', lg: '1.75rem' },
+  content: {sm: '0.75rem', md: '1.25rem', lg: '1.75rem'},
 } as const
 
 export const baseColorTokens = {
@@ -105,9 +105,11 @@ const darkColorTokens = {
 } as const
 
 type CssVariableMap = Record<`--${string}`, string>
+
 function kebabCase(value: string): string {
   return value.replace(/[A-Z]/g, (character) => `-${character.toLowerCase()}`)
 }
+
 function colorVariables(colors: Record<string, string>): CssVariableMap {
   return Object.fromEntries(
     Object.entries(colors).map(([name, value]) => [`--ui-color-${kebabCase(name)}`, value]),
@@ -171,13 +173,15 @@ const sharedVariables: CssVariableMap = {
 }
 
 export const baseThemes = {
-  light: { ...sharedVariables, ...colorVariables(baseColorTokens) },
-  dark: { ...sharedVariables, ...colorVariables(darkColorTokens) },
+  light: {...sharedVariables, ...colorVariables(baseColorTokens)},
+  dark: {...sharedVariables, ...colorVariables(darkColorTokens)},
 } as const satisfies Record<BaseTheme, CssVariableMap>
 export type BaseThemeVariables = (typeof baseThemes)[BaseTheme]
+
 export function getBaseThemeVariables(theme: BaseTheme): BaseThemeVariables {
   return baseThemes[theme]
 }
+
 export function applyBaseTheme(theme: BaseTheme, element?: HTMLElement): void {
   if (typeof document === 'undefined' && !element) return
   const root = element ?? document.documentElement

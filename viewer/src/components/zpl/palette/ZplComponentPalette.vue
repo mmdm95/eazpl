@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { GripVertical } from '@lucide/vue'
-import type { ComputedRef } from 'vue'
-import { computed } from 'vue'
-import { BaseAlert, BaseBadge, BaseButton, BaseLucideIcon, BaseTooltip } from '@/components/base'
-import type { ZplComponentDefinition } from '@/types/zpl'
-import type { ZplComponentPaletteEmits, ZplComponentPaletteProps } from './types'
+import {GripVertical} from '@lucide/vue'
+import type {ComputedRef} from 'vue'
+import {computed} from 'vue'
+import {BaseAlert, BaseBadge, BaseButton, BaseLucideIcon, BaseTooltip} from '@/components/base'
+import type {ZplComponentDefinition} from '@/types/zpl'
+import type {ZplComponentPaletteEmits, ZplComponentPaletteProps} from './types'
 
 const props = defineProps<ZplComponentPaletteProps>()
 const emit = defineEmits<ZplComponentPaletteEmits>()
@@ -16,7 +16,7 @@ const grouped: ComputedRef<Array<{ category: string; items: ZplComponentDefiniti
       const category = definition.category ?? 'Components'
       groups.set(category, [...(groups.get(category) ?? []), definition])
     }
-    return [...groups.entries()].map(([category, items]) => ({ category, items }))
+    return [...groups.entries()].map(([category, items]) => ({category, items}))
   },
 )
 
@@ -40,7 +40,7 @@ function onDragStart(event: DragEvent, definition: ZplComponentDefinition): void
       />
     </div>
 
-    <BaseAlert v-else-if="error" variant="danger" :description="error" />
+    <BaseAlert v-else-if="error" variant="danger" :description="error"/>
 
     <div v-else class="space-y-4">
       <section v-for="group in grouped" :key="group.category" class="space-y-2">
@@ -59,7 +59,7 @@ function onDragStart(event: DragEvent, definition: ZplComponentDefinition): void
           @keydown.enter.prevent="emit('add', definition)"
           @keydown.space.prevent="emit('add', definition)"
         >
-          <BaseLucideIcon :icon="GripVertical" class="h-3.5 w-3.5 text-content-muted" />
+          <BaseLucideIcon :icon="GripVertical" class="h-3.5 w-3.5 text-content-muted"/>
           <div class="min-w-0 flex-1">
             <p class="truncate text-xs font-medium text-content">{{ definition.name }}</p>
           </div>

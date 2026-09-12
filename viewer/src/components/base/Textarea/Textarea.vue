@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { X } from '@lucide/vue'
-import { computed, nextTick, ref } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
+import {X} from '@lucide/vue'
+import {computed, nextTick, ref} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { TextareaProps } from './types'
-import { t } from '@/i18n'
+import type {TextareaProps} from './types'
+import {t} from '@/i18n'
 
-defineOptions({ name: 'BaseTextarea' })
+defineOptions({name: 'BaseTextarea'})
 
 const props = withDefaults(defineProps<TextareaProps>(), {
   modelValue: '',

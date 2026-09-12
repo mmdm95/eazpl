@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { LoaderCircle } from '@lucide/vue'
-import { computed } from 'vue'
-import { cn } from '@/utils'
-import { resolveClasses } from '../shared'
+import {LoaderCircle} from '@lucide/vue'
+import {computed} from 'vue'
+import {cn} from '@/utils'
+import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
-import type { SwitchProps } from './types'
+import type {SwitchProps} from './types'
 
-defineOptions({ name: 'BaseSwitch' })
+defineOptions({name: 'BaseSwitch'})
 
 const props = withDefaults(defineProps<SwitchProps>(), {
   modelValue: false,

@@ -1,4 +1,4 @@
-import type { ZplComponentDefinition, ZplDesignerState } from '@/types/zpl'
+import type {ZplComponentDefinition, ZplDesignerState} from '@/types/zpl'
 
 interface ApiEnvelope<T> {
   data?: T
@@ -31,7 +31,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       headers: {
-        ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(init?.body ? {'Content-Type': 'application/json'} : {}),
         ...init?.headers,
       },
     })

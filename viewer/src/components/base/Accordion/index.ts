@@ -1,4 +1,4 @@
-export { default as BaseAccordion } from './Accordion.vue'
+export {default as BaseAccordion} from './Accordion.vue'
 export type {
   AccordionClasses,
   AccordionItem,

@@ -1,4 +1,4 @@
-export { default as BaseDropdown } from './Dropdown.vue'
+export {default as BaseDropdown} from './Dropdown.vue'
 export type {
   DropdownClasses,
   DropdownOption,

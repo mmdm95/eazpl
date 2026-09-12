@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon } from '../shared'
+import type {BaseClasses, BaseIcon} from '../shared'
 
 export interface IconProps {
   icon: BaseIcon

@@ -1,4 +1,4 @@
-import type { ZplDesignerTool, ZplGridConfig, ZplLabelConfig } from '@/types/zpl'
+import type {ZplDesignerTool, ZplGridConfig, ZplLabelConfig} from '@/types/zpl'
 
 export interface ZplToolbarProps {
   label: ZplLabelConfig

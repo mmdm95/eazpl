@@ -1,4 +1,4 @@
-import type { BaseClasses, BaseIcon } from '../shared'
+import type {BaseClasses, BaseIcon} from '../shared'
 
 export type CheckboxValue = string | number
 export type CheckboxModelValue = boolean | CheckboxValue[]
