@@ -108,10 +108,21 @@ function endPan(event: PointerEvent): void {
 }
 
 function onWheel(event: WheelEvent): void {
-  if (!event.ctrlKey && !event.metaKey) return
+  if (event.ctrlKey || event.metaKey) {
+    event.preventDefault()
+    const direction = event.deltaY > 0 ? -0.1 : 0.1
+    emit('zoom', props.zoom + direction)
+    return
+  }
+
+  // Plain wheel / two-finger trackpad scroll pans the canvas, no matter
+  // which tool is active — you don't need to switch to the hand tool.
   event.preventDefault()
-  const direction = event.deltaY > 0 ? -0.1 : 0.1
-  emit('zoom', props.zoom + direction)
+  panOffset.value = {
+    x: panOffset.value.x - event.deltaX,
+    y: panOffset.value.y - event.deltaY,
+  }
+  clampPan()
 }
 
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -176,7 +187,7 @@ watch(
     @wheel="onWheel"
   >
     <div
-      class="pointer-events-none absolute bottom-4 left-4 z-20 flex flex-col gap-2"
+      class="pointer-events-none absolute bottom-4 left-4 z-20 flex gap-2"
       @pointerdown.stop
     >
       <div
