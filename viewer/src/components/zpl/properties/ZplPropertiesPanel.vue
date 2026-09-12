@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import {computed} from 'vue'
 import {BaseCard, BaseInput} from '@/components/base'
-import {ZplAttributeEditor} from './'
+import {ZplAttributeEditor, ZplTableRowsEditor} from './'
 import type {ZplPropertiesPanelEmits, ZplPropertiesPanelProps} from './types'
 
-defineProps<ZplPropertiesPanelProps>()
+const props = defineProps<ZplPropertiesPanelProps>()
 const emit = defineEmits<ZplPropertiesPanelEmits>()
+
+const visibleAttributes = computed(() =>
+  (props.definition?.attributes ?? []).filter(
+    (attribute) => !(props.instance?.type === 'table' && attribute.name === 'rows'),
+  ),
+)
 </script>
 <template>
   <section class="flex h-full flex-col gap-4 overflow-y-auto">
@@ -53,12 +60,12 @@ const emit = defineEmits<ZplPropertiesPanelEmits>()
             @update:model-value="emit('update-geometry', instance.id, {height: Number($event)})"
           />
           <BaseInput
+            v-if="definition.rotatable !== false"
             :model-value="instance.rotation ?? 0"
             type="number"
             label="Rotation"
             min="0"
             max="359"
-            :disabled="definition.rotatable === false"
             @update:model-value="emit('update-geometry', instance.id, {rotation: Number($event)})"
           />
         </div>
@@ -67,11 +74,18 @@ const emit = defineEmits<ZplPropertiesPanelEmits>()
       <BaseCard>
         <div class="space-y-4">
           <ZplAttributeEditor
-            v-for="attribute in definition.attributes"
+            v-for="attribute in visibleAttributes"
             :key="attribute.name"
             :definition="attribute"
             :model-value="instance.attributes[attribute.name] ?? attribute.default ?? null"
             @update:model-value="emit('update-attribute', instance.id, attribute.name, $event)"
+          />
+
+          <ZplTableRowsEditor
+            v-if="instance.type === 'table' && definition.attributes.some((attribute) => attribute.name === 'rows')"
+            :columns="Number(instance.attributes.columns ?? 2)"
+            :model-value="instance.attributes.rows"
+            @update:model-value="emit('update-attribute', instance.id, 'rows', $event)"
           />
         </div>
       </BaseCard>

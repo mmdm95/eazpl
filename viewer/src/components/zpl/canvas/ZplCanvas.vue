@@ -52,12 +52,14 @@ function snap(value: number): number {
 }
 
 function onViewportPointerDown(event: PointerEvent): void {
-  if (props.activeTool !== 'hand') {
+  const shouldPan = props.activeTool === 'hand' || event.button === 1
+
+  if (!shouldPan) {
     emit('select', null)
     return
   }
 
-  if (event.button !== 0) return
+  if (event.button !== 0 && event.button !== 1) return
   event.preventDefault()
   const viewport = event.currentTarget as HTMLElement
   panState.value = {
@@ -82,6 +84,13 @@ function endPan(event: PointerEvent): void {
   if (panState.value?.pointerId !== event.pointerId) return
   panState.value = null
 }
+
+function onWheel(event: WheelEvent): void {
+  if (!event.ctrlKey && !event.metaKey) return
+  event.preventDefault()
+  const direction = event.deltaY > 0 ? -0.1 : 0.1
+  emit('zoom', props.zoom + direction)
+}
 </script>
 <template>
   <div
@@ -93,6 +102,7 @@ function endPan(event: PointerEvent): void {
     @pointermove="onViewportPointerMove"
     @pointerup="endPan"
     @pointercancel="endPan"
+    @wheel="onWheel"
   >
     <div
       class="relative shrink-0 border border-border bg-white shadow-control-lg"
@@ -100,7 +110,6 @@ function endPan(event: PointerEvent): void {
         { width: `${label.width * zoom}px`, height: `${label.height * zoom}px` },
         grid.enabled ? gridStyle : undefined,
       ]"
-      @pointerdown.stop
       @dragover.prevent
       @drop.prevent="onDrop"
     >

@@ -23,6 +23,7 @@ export interface ZplCanvasEmits {
   move: [id: string, x: number, y: number]
   resize: [id: string, width: number, height: number]
   rotate: [id: string, rotation: number]
+  zoom: [zoom: number]
 }
 
 export interface ZplCanvasComponentProps {

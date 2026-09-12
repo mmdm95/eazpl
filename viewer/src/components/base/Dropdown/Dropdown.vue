@@ -366,7 +366,7 @@ function updateMenuPosition(): void {
               props.classes,
               'menu',
               cn(
-                'fixed z-40 max-h-menu-max-height overflow-y-auto rounded-overlay border border-border bg-surface-raised p-menu-padding shadow-xl shadow-shadow',
+                'fixed z-40 max-h-menu-max-height min-w-40 overflow-y-auto rounded-overlay border border-border bg-surface-raised p-menu-padding shadow-xl shadow-shadow',
               ),
             )
           "

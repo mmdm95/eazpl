@@ -1,6 +1,8 @@
 import type { App } from 'vue'
 
 import { BaseAccordion } from './Accordion'
+import { BaseAlert } from './Alert'
+import { BaseBadge } from './Badge'
 import { BaseButton } from './Button'
 import { BaseCard } from './Card'
 import { BaseCheckbox } from './Checkbox'
@@ -32,6 +34,12 @@ export type {
   AccordionProps,
   AccordionSection,
 } from './Accordion'
+
+export { BaseAlert } from './Alert'
+export type { AlertClasses, AlertProps } from './Alert'
+
+export { BaseBadge } from './Badge'
+export type { BadgeClasses, BadgeProps } from './Badge'
 
 export { BaseButton } from './Button'
 export type { ButtonClasses, ButtonProps } from './Button'
@@ -134,6 +142,8 @@ export type { BaseTheme, BaseThemeVariables } from './tokens'
 
 export const baseComponents = {
   BaseAccordion,
+  BaseAlert,
+  BaseBadge,
   BaseButton,
   BaseCard,
   BaseCheckbox,

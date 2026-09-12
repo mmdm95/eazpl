@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { HelpCircle } from '@lucide/vue'
 import { ZplCanvas } from '@/components/zpl/canvas'
 import { ZplLayersPanel } from '@/components/zpl/layers'
 import { ZplComponentPalette } from '@/components/zpl/palette'
 import { ZplPropertiesPanel } from '@/components/zpl/properties'
 import { ZplToolbar } from '@/components/zpl/toolbar'
+import {BaseModal, BaseTab} from '@/components/base'
 import { useZplComponents } from '@/composables/zpl/useZplComponents'
 import { useZplDesigner } from '@/composables/zpl/useZplDesigner'
 import { generateZpl } from '@/services/zpl'
@@ -19,6 +21,8 @@ const generatedPreview = ref<string | null>(null)
 const previewError = ref<string | null>(null)
 const generating = ref(false)
 const notification = ref<ZplDesignerNotification | null>(null)
+const activePanel = ref('properties')
+const guideVisible = ref(false)
 
 const definitionMap = computed(
   () =>
@@ -165,8 +169,8 @@ onBeforeUnmount(() => {
       {{ notification.message }}
     </div>
 
-    <div class="grid min-h-0 flex-1 grid-cols-[280px_minmax(0,1fr)_340px]">
-      <aside class="flex min-h-0 flex-col gap-4 border-e border-border bg-surface p-4">
+    <div class="grid min-h-0 flex-1 grid-cols-[250px_minmax(0,1fr)_360px]">
+      <aside class="flex min-h-0 flex-col gap-3 border-e border-border bg-surface p-3">
         <ZplComponentPalette
           :definitions="componentService.components.value"
           :loading="componentService.loading.value"
@@ -186,7 +190,7 @@ onBeforeUnmount(() => {
         />
       </aside>
 
-      <section ref="viewport" class="min-h-0 min-w-0">
+      <section ref="viewport" class="relative min-h-0 min-w-0">
         <ZplCanvas
           :label="designer.state.value.label"
           :grid="designer.state.value.grid"
@@ -201,40 +205,94 @@ onBeforeUnmount(() => {
           @move="designer.moveComponent"
           @resize="designer.resizeComponent"
           @rotate="designer.rotateComponent"
+          @zoom="designer.setZoom"
         />
+        <button
+          type="button"
+          class="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-pill border border-border bg-surface text-content-muted shadow-control transition hover:border-primary hover:text-primary"
+          aria-label="ZPL designer guide"
+          @click="guideVisible = true"
+        >
+          <HelpCircle class="h-4 w-4" />
+        </button>
       </section>
 
-      <aside
-        class="flex min-h-0 flex-col gap-4 overflow-y-auto border-s border-border bg-surface p-4"
-      >
-        <ZplPropertiesPanel
-          :instance="designer.selectedComponent.value"
-          :definition="selectedDefinition"
-          @update-attribute="designer.updateAttribute"
-          @update-geometry="designer.updateGeometry"
-        />
+      <aside class="flex min-h-0 flex-col gap-3 border-s border-border bg-surface p-3">
+        <BaseTab
+          v-model="activePanel"
+          :items="[
+            { value: 'properties', label: 'Properties' },
+            { value: 'output', label: 'Output' },
+          ]"
+          :classes="{ panelContainer: 'min-h-0 w-full flex-1' }"
+        >
+          <template #panel-properties>
+            <ZplPropertiesPanel
+              :instance="designer.selectedComponent.value"
+              :definition="selectedDefinition"
+              @update-attribute="designer.updateAttribute"
+              @update-geometry="designer.updateGeometry"
+            />
+          </template>
 
-        <section class="flex min-h-64 flex-1 flex-col">
-          <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-content-muted">
-            ZPL preview
-          </h2>
-          <img
-            v-if="generatedPreview"
-            :src="generatedPreview"
-            alt="Backend-generated label preview"
-            class="mb-3 max-h-72 w-full rounded-control border border-border bg-white object-contain"
-          />
-          <p
-            v-else-if="previewError"
-            class="mb-3 rounded-control border border-danger/30 bg-danger-soft p-2 text-xs text-danger"
-          >
-            {{ previewError }}
-          </p>
-          <pre
-            class="min-h-40 flex-1 overflow-auto rounded-control border border-border bg-surface-muted p-3 text-xs text-content"
-            >{{ generatedZpl || 'Generated ZPL will appear here.' }}</pre>
-        </section>
+          <template #panel-output>
+            <section class="flex min-h-0 flex-1 flex-col">
+              <img
+                v-if="generatedPreview"
+                :src="generatedPreview"
+                alt="Backend-generated label preview"
+                class="mb-3 max-h-72 w-full rounded-control border border-border bg-white object-contain"
+              />
+              <p
+                v-else-if="previewError"
+                class="mb-3 rounded-control border border-danger/30 bg-danger-soft p-2 text-xs text-danger"
+              >
+                {{ previewError }}
+              </p>
+              <pre
+                class="min-h-40 flex-1 overflow-auto rounded-control border border-border bg-surface-muted p-3 text-xs text-content"
+                >{{ generatedZpl || 'Generated ZPL will appear here.' }}</pre>
+            </section>
+          </template>
+        </BaseTab>
       </aside>
     </div>
+
+    <BaseModal v-model="guideVisible" title="ZPL designer guide" :max-width="560">
+      <div class="space-y-4 p-4 text-sm text-content">
+        <section>
+          <h3 class="font-semibold text-content">Canvas</h3>
+          <ul class="mt-1 list-disc space-y-1 ps-5 text-content-muted">
+            <li>Drag a component from the left panel onto the label.</li>
+            <li>Use Hand for click-and-drag panning; middle-drag also pans in any mode.</li>
+            <li>Hold Ctrl or ⌘ while scrolling to zoom; the Fit button restores the full label.</li>
+          </ul>
+        </section>
+        <section>
+          <h3 class="font-semibold text-content">Editing</h3>
+          <ul class="mt-1 list-disc space-y-1 ps-5 text-content-muted">
+            <li>Drag components to move them; drag the corner handle to resize.</li>
+            <li>The circular rotate icon appears only for components that support rotation.</li>
+            <li>Use the compact layer rows to reorder, lock, hide, duplicate, or delete items.</li>
+          </ul>
+        </section>
+        <section>
+          <h3 class="font-semibold text-content">Tables and ZPL</h3>
+          <ul class="mt-1 list-disc space-y-1 ps-5 text-content-muted">
+            <li>Set the column count first; header and data cells fill automatically.</li>
+            <li>Type <code>~BR</code> inside a table cell to force a line break.</li>
+            <li>Generate, then switch to Output to preview or copy the resulting ZPL.</li>
+          </ul>
+        </section>
+        <section>
+          <h3 class="font-semibold text-content">Shortcuts</h3>
+          <ul class="mt-1 list-disc space-y-1 ps-5 text-content-muted">
+            <li>Delete or Backspace removes the selected component.</li>
+            <li>Ctrl/⌘+Z and Ctrl/⌘+Shift+Z undo and redo.</li>
+            <li>Ctrl/⌘+D duplicates the selected component.</li>
+          </ul>
+        </section>
+      </div>
+    </BaseModal>
   </main>
 </template>

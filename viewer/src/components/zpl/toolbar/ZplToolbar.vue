@@ -37,10 +37,10 @@ const tools = [
 </script>
 <template>
   <header
-    class="flex flex-wrap items-end justify-between gap-4 border-b border-border bg-surface p-4"
+    class="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-surface px-3 py-2"
   >
-    <div class="flex flex-wrap items-end gap-3">
-      <div class="w-28">
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="w-20">
         <BaseInput
           :model-value="label.width"
           type="number"
@@ -49,7 +49,7 @@ const tools = [
           @update:model-value="emit('update:label', { width: Number($event) })"
         />
       </div>
-      <div class="w-28">
+      <div class="w-20">
         <BaseInput
           :model-value="label.height"
           type="number"
@@ -58,7 +58,7 @@ const tools = [
           @update:model-value="emit('update:label', { height: Number($event) })"
         />
       </div>
-      <div class="w-32">
+      <div class="w-24">
         <BaseDropdown
           :model-value="label.dpi"
           :options="dpiOptions"
@@ -66,7 +66,7 @@ const tools = [
           @update:model-value="emit('update:label', { dpi: Number($event) })"
         />
       </div>
-      <div class="w-36">
+      <div class="w-28">
         <BaseDropdown
           :model-value="label.orientation ?? 'portrait'"
           :options="orientationOptions"
@@ -76,9 +76,9 @@ const tools = [
       </div>
     </div>
 
-    <div class="flex flex-wrap items-end gap-3">
+    <div class="flex flex-wrap items-center gap-2">
       <div
-        class="flex items-center gap-1 rounded-control border border-border bg-surface-muted p-1"
+        class="flex items-center gap-0.5 rounded-control border border-border bg-surface-muted p-0.5"
       >
         <BaseButton
           v-for="tool in tools"
@@ -90,12 +90,11 @@ const tools = [
           :aria-pressed="activeTool === tool.id"
           @click="emit('set-tool', tool.id)"
         >
-          {{ tool.label }}
         </BaseButton>
       </div>
 
       <div
-        class="flex items-center gap-1 rounded-control border border-border bg-surface-muted p-1"
+        class="flex items-center gap-0.5 rounded-control border border-border bg-surface-muted p-0.5"
       >
         <BaseButton
           size="sm"
@@ -105,7 +104,6 @@ const tools = [
           :aria-pressed="grid.enabled"
           @click="emit('update:grid', { enabled: !grid.enabled })"
         >
-          Grid
         </BaseButton>
         <BaseButton
           size="sm"
@@ -115,40 +113,31 @@ const tools = [
           :aria-pressed="grid.snap"
           @click="emit('update:grid', { snap: !grid.snap })"
         >
-          Snap
         </BaseButton>
       </div>
 
-      <div class="w-28">
+      <div class="w-16">
         <BaseInput
           :model-value="grid.size"
           type="number"
-          label="Grid size"
+          label="Grid"
           min="1"
           @update:model-value="emit('update:grid', { size: Number($event) })"
         />
       </div>
-      <BaseButton variant="outline" :icon="ZoomOut" @click="emit('zoom-out')">Out</BaseButton>
-      <span class="w-14 pb-2 text-center text-sm font-medium text-content-muted">
+      <BaseButton size="sm" variant="outline" :icon="ZoomOut" aria-label="Zoom out" @click="emit('zoom-out')" />
+      <span class="w-12 text-center text-xs font-medium text-content-muted">
         {{ Math.round(zoom * 100) }}%
       </span>
-      <BaseButton variant="outline" :icon="ZoomIn" @click="emit('zoom-in')">In</BaseButton>
-      <BaseButton variant="outline" :icon="Maximize" @click="emit('fit')">Fit</BaseButton>
-      <BaseButton variant="outline" :icon="Undo" :disabled="!canUndo" @click="emit('undo')"
-        >Undo</BaseButton
-      >
-      <BaseButton variant="outline" :icon="Redo" :disabled="!canRedo" @click="emit('redo')"
-        >Redo</BaseButton
-      >
-      <BaseButton variant="primary" :icon="Play" :loading="generating" @click="emit('generate')">
+      <BaseButton size="sm" variant="outline" :icon="ZoomIn" aria-label="Zoom in" @click="emit('zoom-in')" />
+      <BaseButton size="sm" variant="outline" :icon="Maximize" aria-label="Fit to viewport" @click="emit('fit')" />
+      <BaseButton size="sm" variant="outline" :icon="Undo" aria-label="Undo" :disabled="!canUndo" @click="emit('undo')" />
+      <BaseButton size="sm" variant="outline" :icon="Redo" aria-label="Redo" :disabled="!canRedo" @click="emit('redo')" />
+      <BaseButton size="sm" variant="primary" :icon="Play" :loading="generating" @click="emit('generate')">
         Generate
       </BaseButton>
-      <BaseButton v-if="hasOutput" variant="outline" :icon="Copy" @click="emit('copy')"
-        >Copy</BaseButton
-      >
-      <BaseButton v-if="hasOutput" variant="outline" :icon="Download" @click="emit('download')">
-        Download
-      </BaseButton>
+      <BaseButton v-if="hasOutput" size="sm" variant="outline" :icon="Copy" aria-label="Copy ZPL" @click="emit('copy')" />
+      <BaseButton v-if="hasOutput" size="sm" variant="outline" :icon="Download" aria-label="Download ZPL" @click="emit('download')" />
     </div>
   </header>
 </template>

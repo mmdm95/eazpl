@@ -20,6 +20,18 @@ const options = computed<DropdownOption[]>(() =>
   })),
 )
 
+const guide = computed(() => {
+  if (props.definition.name === 'fontName') {
+    return 'Printer fonts are single characters: A-Z or 0-9.'
+  }
+
+  if (props.definition.name === 'mode') {
+    return 'N = none, U = UCC case, A = automatic, D = UCC/EAN.'
+  }
+
+  return ''
+})
+
 function onFile(event: Event): void {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -100,5 +112,7 @@ function onFile(event: Event): void {
         class="max-h-32 rounded-control border border-border object-contain"
       />
     </div>
+
+    <p v-if="guide" class="text-xs text-content-muted">{{ guide }}</p>
   </div>
 </template>

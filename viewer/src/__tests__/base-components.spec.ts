@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
 import { mount } from '@vue/test-utils'
+import { Check } from '@lucide/vue'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { defineComponent, h, nextTick } from 'vue'
 
 import {
   BaseAccordion,
+  BaseAlert,
+  BaseBadge,
   BaseButton,
   BaseCard,
   BaseCheckbox,
@@ -92,6 +95,50 @@ describe('BaseButton', () => {
     await wrapper.trigger('click')
 
     expect(wrapper.emitted('click')).toBeUndefined()
+  })
+})
+
+describe('BaseBadge', () => {
+  it('renders content, an icon, and class overrides', () => {
+    const wrapper = mount(BaseBadge, {
+      props: {
+        variant: 'success',
+        size: 'lg',
+        icon: Check,
+        classes: { root: 'custom-root', label: 'custom-label' },
+      },
+      slots: { default: 'Active' },
+    })
+
+    expect(wrapper.text()).toContain('Active')
+    expect(wrapper.classes()).toContain('custom-root')
+    expect(wrapper.find('span > span').classes()).toContain('custom-label')
+  })
+})
+
+describe('BaseAlert', () => {
+  it('renders content, a close action, and class overrides', async () => {
+    const wrapper = mount(BaseAlert, {
+      props: {
+        variant: 'danger',
+        title: 'Upload failed',
+        description: 'The label could not be generated.',
+        closable: true,
+        classes: { root: 'custom-root', title: 'custom-title' },
+      },
+      slots: { default: 'Please try again.' },
+    })
+
+    expect(wrapper.attributes('role')).toBe('alert')
+    expect(wrapper.text()).toContain('Upload failed')
+    expect(wrapper.text()).toContain('The label could not be generated.')
+    expect(wrapper.text()).toContain('Please try again.')
+    expect(wrapper.classes()).toContain('custom-root')
+    expect(wrapper.find('h3').classes()).toContain('custom-title')
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.emitted('close')).toHaveLength(1)
   })
 })
 

@@ -145,6 +145,13 @@ class Table implements RendererInterface
                 $this->renderedHeight += $borderThickness;
                 $rowY += $borderThickness;
             }
+
+            $breakAfterHeader = $rowIndex === 0 && (bool)$this->getOption('break_after_header', false);
+            $breakAfterRow = (bool)$this->getOption('break_rows', false) && $rowCounter < $rowsCount;
+
+            if ($breakAfterHeader || $breakAfterRow) {
+                $zpl[] = (new Break_())->render();
+            }
         }
 
         if ($rowsCount === 0) {

@@ -14,6 +14,20 @@ it('exposes backend-driven ZPL component definitions', function () {
         ->and($definitions[0]->attributes)->not->toBeEmpty();
 });
 
+it('exposes all designer component families', function () {
+    $types = array_map(
+        static fn (object $definition): string => $definition->type,
+        (new ZplComponentRegistry())->all(),
+    );
+
+    expect($types)->toContain('raw')
+        ->toContain('vertical-line')
+        ->toContain('ellipse')
+        ->toContain('unicode-text')
+        ->toContain('diagonal-line')
+        ->toContain('text-group');
+});
+
 it('generates ZPL from designer state', function () {
     $state = [
         'label' => [
@@ -79,6 +93,65 @@ it('generates tables with more than two columns', function () {
         ->toContain('^FDB')
         ->toContain('^FDC')
         ->toContain('^FDD');
+});
+
+it('generates table break commands from designer options', function () {
+    $state = [
+        'label' => ['width' => 812, 'height' => 500, 'dpi' => 203, 'orientation' => 'portrait'],
+        'components' => [[
+            'id' => 'table-instance',
+            'type' => 'table',
+            'x' => 10,
+            'y' => 10,
+            'attributes' => [
+                'columns' => 2,
+                'rows' => '[["Header 1", "Header 2"], ["Value 1", "Value 2"]]',
+                'fontSize' => 24,
+                'padding' => 4,
+                'borderThickness' => 2,
+                'headerBreak' => true,
+                'rowBreak' => true,
+            ],
+        ]],
+        'selectedComponentId' => null,
+        'activeTool' => 'selection',
+        'zoom' => 1,
+        'grid' => ['enabled' => true, 'size' => 10, 'snap' => true],
+    ];
+
+    $state = (new DesignerStateValidator())->validate($state);
+    $zpl = (new ZplDesignerGenerator(new ZplComponentRegistry()))->generate($state);
+
+    expect(substr_count($zpl, '~BR'))->toBe(1);
+});
+
+it('generates group text wrapper components', function () {
+    $state = [
+        'label' => ['width' => 812, 'height' => 500, 'dpi' => 203, 'orientation' => 'portrait'],
+        'components' => [[
+            'id' => 'text-group-instance',
+            'type' => 'text-group',
+            'x' => 20,
+            'y' => 30,
+            'attributes' => [
+                'items' => "First line\nSecond line",
+                'fontName' => 'A',
+                'fontSize' => 30,
+                'orientation' => 'v',
+                'gap' => 5,
+            ],
+        ]],
+        'selectedComponentId' => null,
+        'activeTool' => 'selection',
+        'zoom' => 1,
+        'grid' => ['enabled' => true, 'size' => 10, 'snap' => true],
+    ];
+
+    $state = (new DesignerStateValidator())->validate($state);
+    $zpl = (new ZplDesignerGenerator(new ZplComponentRegistry()))->generate($state);
+
+    expect($zpl)->toContain('^FDFirst line')
+        ->toContain('^FDSecond line');
 });
 
 it('omits hidden designer layers from generated ZPL', function () {

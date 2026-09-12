@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { RotateCw } from '@lucide/vue'
 import { computed, ref } from 'vue'
+import { BaseLucideIcon } from '@/components/base'
 import type { CSSProperties } from 'vue'
 import type { ZplCanvasComponentEmits, ZplCanvasComponentProps } from './types'
 
@@ -33,7 +35,8 @@ const previewText = computed(() => {
   const value =
     props.instance.attributes.text ??
     props.instance.attributes.value ??
-    props.instance.attributes.data
+    props.instance.attributes.data ??
+    props.instance.attributes.items
   return typeof value === 'string' && value ? value : props.definition.name
 })
 
@@ -125,23 +128,55 @@ function endDrag(event: PointerEvent): void {
         {{ previewText }}
       </span>
       <div
+        v-else-if="definition.preview === 'shape' && instance.type === 'diagonal-line'"
+        class="h-full w-full"
+        :style="{
+          background:
+            instance.attributes.orientation === 'L'
+              ? 'linear-gradient(to top right, transparent 48%, currentColor 48%, currentColor 52%, transparent 52%)'
+              : 'linear-gradient(to bottom right, transparent 48%, currentColor 48%, currentColor 52%, transparent 52%)',
+        }"
+      />
+      <div
+        v-else-if="
+          definition.preview === 'shape' &&
+          (instance.type === 'circle' || instance.type === 'ellipse')
+        "
+        class="h-full w-full rounded-full border-2 border-content"
+      />
+      <div
+        v-else-if="definition.preview === 'shape' && instance.type === 'vertical-line'"
+        class="h-full w-full bg-content"
+      />
+      <div
         v-else-if="definition.preview === 'shape'"
         class="h-full w-full rounded-control border-2 border-content"
       />
       <div
         v-else-if="definition.preview === 'table'"
-        class="grid h-full w-full grid-cols-2 gap-px bg-border"
+        class="grid h-full w-full gap-px bg-border"
+        :style="{
+          gridTemplateColumns: `repeat(${Math.max(1, Number(instance.attributes.columns ?? 2))}, minmax(0, 1fr))`,
+        }"
       >
-        <div v-for="index in 4" :key="index" class="min-h-0 bg-surface" />
+        <div
+          v-for="index in Math.max(1, Number(instance.attributes.columns ?? 2)) * 3"
+          :key="index"
+          class="min-h-0 bg-surface"
+        />
       </div>
       <div v-else class="h-[70%] w-[70%] rounded-control bg-content/90" />
     </div>
 
     <span
-      v-if="selected && !locked"
-      class="absolute -top-2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-pill border border-primary bg-primary"
+      v-if="selected && !locked && definition.rotatable !== false"
+      class="absolute -top-5 left-1/2 flex h-5 w-5 -translate-x-1/2 cursor-grab items-center justify-center rounded-pill border border-primary bg-surface text-primary shadow-control transition hover:bg-primary-soft"
+      title="Rotate"
+      aria-hidden="true"
       @pointerdown="startDrag($event, 'rotate')"
-    />
+    >
+      <BaseLucideIcon :icon="RotateCw" class="h-3 w-3" />
+    </span>
     <span
       v-if="selected && !locked && definition.resizable !== false"
       class="absolute -bottom-1 -right-1 h-3 w-3 cursor-nwse-resize rounded-pill border border-primary bg-primary"
