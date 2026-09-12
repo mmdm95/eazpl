@@ -122,7 +122,7 @@ class Font implements RendererInterface
     {
         if ($this->printerPath && !$this->isForBlock) {
             return (!$this->isForBlock ? '^A@' : '') .
-                ($this->orientation ? $this->orientation->value : 'N') .
+                ($this->orientation->value ?? 'N') .
                 ',' .
                 $this->height .
                 ($this->width ? ',' . $this->width : '') .
@@ -131,7 +131,7 @@ class Font implements RendererInterface
 
         return (!$this->isForBlock ? '^A' : '') .
             $this->fontName .
-            ($this->orientation ? $this->orientation->value : '') .
+            ($this->orientation->value ?? '') .
             ',' .
             $this->height .
             ($this->width ? ',' . $this->width : '');
