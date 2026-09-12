@@ -39,6 +39,7 @@ class TextGroup implements RendererInterface
      * @param int $x
      * @param int $y
      * @param string $orientation
+     * @param int $gap
      * @param GroupTextWrapper|Text ...$texts
      */
     public function __construct(
