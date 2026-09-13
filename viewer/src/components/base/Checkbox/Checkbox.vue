@@ -75,7 +75,7 @@ function onChange(event: Event): void {
       "
     >
       <span
-        :class="resolveClasses(props.classes, 'inputWrapper', 'relative inline-flex mt-field-label-gap')">
+        :class="resolveClasses(props.classes, 'inputWrapper', 'relative inline-flex')">
         <input
           :id="checkboxId"
           type="checkbox"
@@ -84,7 +84,7 @@ function onChange(event: Event): void {
               props.classes,
               'input',
               cn(
-                'peer h-icon-sm w-icon-sm cursor-pointer appearance-none rounded-control border border-border-strong bg-surface transition-all duration-200 checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary',
+                'peer h-icon-sm w-icon-sm cursor-pointer appearance-none rounded-sm border border-border-strong bg-surface transition-all duration-200 checked:border-primary checked:bg-primary indeterminate:border-primary indeterminate:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary',
                 props.disabled && 'cursor-not-allowed',
               ),
             )

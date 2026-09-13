@@ -2,6 +2,7 @@
 import {ref, watch} from 'vue'
 import {Trash} from "@lucide/vue";
 import {BaseButton} from "@/components/base";
+import BaseCheckbox from "@/components/base/Checkbox/Checkbox.vue";
 
 const props = defineProps<{
   columns: number
@@ -31,9 +32,15 @@ function parseRows(): void {
       return
     }
     const rows = parsed.map((row) => (Array.isArray(row) ? row.map(String) : []))
-    hasHeader.value = rows.length > 0
-    headerRow.value = normalizeRow(rows[0] ?? [])
-    dataRows.value = rows.slice(1).map(normalizeRow)
+    // Never re-infer whether there's a header from row count — that would
+    // silently swallow the first data row as a "header" on every reparse.
+    // Header state only ever changes explicitly, via the checkbox.
+    if (hasHeader.value) {
+      headerRow.value = normalizeRow(rows[0] ?? [])
+      dataRows.value = rows.slice(1).map(normalizeRow)
+    } else {
+      dataRows.value = rows.map(normalizeRow)
+    }
   } catch {
     headerRow.value = normalizeRow([])
     dataRows.value = []
@@ -57,6 +64,14 @@ function normalizeRows(value: string[][]): string[][] {
 }
 
 function setHeaderEnabled(enabled: boolean): void {
+  if (enabled === hasHeader.value) return
+  hasHeader.value = enabled
+  if (enabled) {
+    // headerRow starts as [] and setHeaderEnabled previously only padded
+    // the *emitted* copy, not this ref — so the template's v-for had
+    // nothing to iterate over and rendered zero header cells.
+    headerRow.value = normalizeRow(headerRow.value)
+  }
   const nextRows = enabled ? [headerRow.value, ...dataRows.value] : dataRows.value
   emitRows(normalizeRows(nextRows))
 }
@@ -108,13 +123,11 @@ watch(
         </p>
       </div>
       <label class="inline-flex items-center gap-2 text-xs font-medium text-content">
-        <input
-          type="checkbox"
-          class="h-4 w-4 rounded border-border text-primary"
-          :checked="hasHeader"
-          @change="setHeaderEnabled(($event.target as HTMLInputElement).checked)"
+        <BaseCheckbox
+          :model-value="hasHeader"
+          label="Header"
+          @update:model-value="(value) => setHeaderEnabled(Array.isArray(value) ? value.length > 0 : value)"
         />
-        Header
       </label>
     </div>
 
