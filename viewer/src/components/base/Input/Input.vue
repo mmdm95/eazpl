@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {LoaderCircle, X} from '@lucide/vue'
-import {computed, ref} from 'vue'
+import {computed, ref, useAttrs} from 'vue'
 import {cn} from '@/utils'
 import {resolveClasses} from '../shared'
 import BaseLucideIcon from '../Icon/Icon.vue'
 import type {InputProps} from './types'
 import {t} from '@/i18n'
 
-defineOptions({name: 'BaseInput'})
+defineOptions({name: 'BaseInput', inheritAttrs: false})
 
 const props = withDefaults(defineProps<InputProps>(), {
   type: 'text',
@@ -39,6 +39,15 @@ const emit = defineEmits<{
   focus: [event: FocusEvent]
   blur: [event: FocusEvent]
 }>()
+
+const attrs = useAttrs()
+// class/style stay on the root wrapper (normal expectation for spacing/layout);
+// everything else (maxlength, min, max, pattern, inputmode, list, data-*, aria-*, etc.)
+// forwards straight through to the native <input>.
+const forwardedInputAttrs = computed(() => {
+  const {class: _class, style: _style, ...rest} = attrs
+  return rest
+})
 
 const inputRef = ref<HTMLInputElement | null>(null)
 const generatedId = `base-input-${Math.random().toString(36).slice(2, 10)}`
@@ -125,7 +134,7 @@ defineExpose({
 </script>
 
 <template>
-  <div :class="rootClass">
+  <div :class="[rootClass, attrs.class]" :style="attrs.style">
     <label
       v-if="props.label"
       :for="inputId"
@@ -147,6 +156,7 @@ defineExpose({
       </slot>
 
       <input
+        v-bind="forwardedInputAttrs"
         :id="inputId"
         ref="inputRef"
         :type="props.type"

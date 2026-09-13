@@ -118,6 +118,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="ZoomOut"
+          icon-only
           aria-label="Zoom out"
           @click="emit('zoom-out')"
         />
@@ -130,6 +131,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="ZoomIn"
+          icon-only
           aria-label="Zoom in"
           @click="emit('zoom-in')"
         />
@@ -139,6 +141,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="Frame"
+          icon-only
           aria-label="Fit to viewport"
           @click="emit('fit')"
         />
@@ -148,6 +151,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="fullscreen ? Minimize : Maximize"
+          icon-only
           :aria-label="fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
           @click="emit('fullscreen')"
         />
@@ -157,6 +161,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="Undo"
+          icon-only
           aria-label="Undo"
           :disabled="!canUndo"
           @click="emit('undo')"
@@ -167,6 +172,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="Redo"
+          icon-only
           aria-label="Redo"
           :disabled="!canRedo"
           @click="emit('redo')"
@@ -186,6 +192,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="Copy"
+          icon-only
           aria-label="Copy ZPL"
           @click="emit('copy')"
         />
@@ -195,6 +202,7 @@ onBeforeUnmount(() => {
           size="sm"
           variant="outline"
           :icon="Download"
+          icon-only
           aria-label="Download ZPL"
           @click="emit('download')"
         />

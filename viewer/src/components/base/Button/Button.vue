@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   iconPosition: 'left',
   icon: undefined,
   loadingIcon: undefined,
+  iconOnly: false,
   classes: undefined,
 })
 
@@ -49,6 +50,7 @@ const rootClass = computed(() =>
       isDisabled.value && 'cursor-not-allowed opacity-60',
       props.block && 'flex w-full',
       props.rounded && 'rounded-pill',
+      props.iconOnly && 'aspect-square !px-0',
     ),
   ),
 )
@@ -70,7 +72,7 @@ function onClick(event: MouseEvent): void {
       :classes="{ root: iconClass }"
     />
     <span
-      v-if="$slots.default"
+      v-if="$slots.default && !props.iconOnly"
       :class="resolveClasses(props.classes, 'label', 'inline-flex items-center')"
     >
       <slot/>

@@ -6,6 +6,7 @@ export interface ButtonProps {
   size?: BaseSize
   icon?: BaseIcon
   loadingIcon?: BaseIcon
+  iconOnly?: boolean
   iconPosition?: 'left' | 'right'
   loading?: boolean
   disabled?: boolean

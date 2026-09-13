@@ -70,7 +70,7 @@ const rootClass = computed(() =>
     props.classes,
     'root',
     cn(
-      'flex w-full items-start gap-control-gap-md rounded-card border p-content-md',
+      'flex w-full items-start gap-control-gap-md rounded-card border p-content-sm',
       variantClass.value,
     ),
   ),

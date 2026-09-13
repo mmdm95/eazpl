@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import {ref, watch} from 'vue'
+import {Trash} from "@lucide/vue";
+import {BaseButton} from "@/components/base";
 
 const props = defineProps<{
   columns: number
@@ -156,14 +158,14 @@ watch(
           "
         ></textarea>
       </div>
-      <button
-        type="button"
-        class="mt-1 h-6 rounded-pill px-2 text-xs font-medium text-danger transition hover:bg-danger-soft"
+      <BaseButton
+        size="sm"
+        variant="outline"
+        :icon="Trash"
+        icon-only
         :aria-label="`Remove row ${rowOffset + 1}`"
         @click="removeRow(rowOffset)"
-      >
-        Remove
-      </button>
+      />
     </div>
 
     <button
